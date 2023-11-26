@@ -15,6 +15,7 @@ function Home() {
     // removes from initial list
     todaysLetters.splice(0, 10),
   );
+  const [pastWords, setPastWords] = useState<string[]>([]);
   const [allFutureLetters, setAllFutureLetters] =
     useState<string[]>(todaysLetters);
 
@@ -129,6 +130,10 @@ function Home() {
       setWord(validatedWord);
       return false;
     }
+    if (pastWords.includes(word)) {
+      setWord(validatedWord);
+      return false;
+    }
 
     // these shorter words for the initial set of letters 2/3/4, we preload the
     // dicts to make checking instant
@@ -139,6 +144,7 @@ function Home() {
         if (selectedLetterBankIdx)
           popToLetterBankPosition(selectedLetterBankIdx);
         setScore(score + 1);
+        setPastWords([...pastWords, word]);
         return true;
       } else {
         undo();
@@ -154,6 +160,7 @@ function Home() {
         if (selectedLetterBankIdx)
           popToLetterBankPosition(selectedLetterBankIdx);
         setScore(score + 1);
+        setPastWords([...pastWords, word]);
         return true;
       } else {
         // setWord(validatedWord);
@@ -170,6 +177,7 @@ function Home() {
         if (selectedLetterBankIdx)
           popToLetterBankPosition(selectedLetterBankIdx);
         setScore(score + 1);
+        setPastWords([...pastWords, word]);
         return true;
       } else {
         // setWord(validatedWord);
@@ -189,6 +197,7 @@ function Home() {
     if (valid) {
       setValidatedWord(word);
       setScore(score + 1);
+      setPastWords([...pastWords, word]);
       return true;
     } else {
       undo();
@@ -211,6 +220,16 @@ function Home() {
   return (
     <div className="w-full flex flex-col items-center">
       <h2>Score: {score}</h2>
+      {pastWords.length ? (
+        <ol>
+          {pastWords.map((word, idx) => (
+            <li key={idx} className="inline-block mr-2">
+              {idx > 0 ? <span className="mr-2">•</span> : ''}
+              {word}
+            </li>
+          ))}
+        </ol>
+      ) : null}
       <div className="mt-8 -mr-2">
         <ul className="block">
           {wordLetters.map((letter, idx) => (

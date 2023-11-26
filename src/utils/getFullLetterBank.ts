@@ -45,6 +45,7 @@ const relativeWeights = [
   0.018036072144288578, 0.002004008016032064,
 ];
 
+// https://dev.to/trekhleb/weighted-random-algorithm-in-javascript-1pdc
 export function weightedRandom(
   items: Array<string>,
   weights: Array<number>,
