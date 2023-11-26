@@ -1,0 +1,23 @@
+import { Story, ArgsTable } from '@storybook/addon-docs';
+import Layout from './';
+
+# Layout
+
+- [Overview](#overview)
+- [Props](#props)
+- [Usage](#usage)
+
+## Overview
+
+`Layout` is a general-use layout component. Children are passed through this component.
+This layout adds an error boundary around the main content in case any errors are thrown
+in a page and unhandled.
+
+## Props
+
+<ArgsTable of={Layout} />
+
+## Usage
+
+Layout is not meant to be used outside of the `_app.tsx` file. This file is responsible
+for setting up the root of the react tree.

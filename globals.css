@@ -1,0 +1,22 @@
+/* This file is used to generate the actual CSS file that will be consumed by
+the app. It uses tailwind CSS to generate the output file. The only thing that
+should go here is default overrides */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', 'Helvetica',
+    'Arial', sans-serif;
+  margin: 0 auto;
+  font-size: 16px;
+  line-height: 1.65;
+  word-break: break-word;
+  font-kerning: auto;
+  font-variant: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  hyphens: auto;
+}
