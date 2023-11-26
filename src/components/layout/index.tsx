@@ -7,9 +7,10 @@ interface LayoutProps {
 
 function Layout({ children }: LayoutProps) {
   return (
-    <div className="flex flex-row absolute top-0 bottom-0 right-0 left-0 overflow-y-scroll">
+    <div className="flex flex-col absolute top-0 bottom-0 right-0 left-0 overflow-y-scroll">
       <ErrorBoundary>
-        <main className="m-4 mx-auto p-4 w-2/3">{children}</main>
+        <h1 className="text-4xl font-bold">Trample</h1>
+        <main className="flex p-4 w-full">{children}</main>
       </ErrorBoundary>
     </div>
   );
