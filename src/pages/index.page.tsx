@@ -3,12 +3,22 @@ import { words as words2 } from '../utils/dicts/2';
 import { words as words3 } from '../utils/dicts/3';
 import { words as words4 } from '../utils/dicts/4';
 import getFullLetterBank from '../utils/getFullLetterBank';
+import {
+  BsArrowDownUp,
+  BsArrowLeft,
+  BsArrowLeftRight,
+  BsArrowLeftSquareFill,
+  BsArrowRight,
+  BsArrowRightSquareFill,
+  BsArrowUpSquareFill,
+  BsTrash3,
+} from 'react-icons/bs';
+import ScoreAndHistory from '../components/scoreAndHistory';
 
 const INITIAL_WORD = 'AXE';
 
 function Home() {
   const todaysLetters = getFullLetterBank();
-  const [validatedWord, setValidatedWord] = useState<string>(INITIAL_WORD);
   const [word, setWord] = useState(INITIAL_WORD);
   const [letterBank, setLetterBank] = useState<string[]>(
     // first 10 items of todaysLetters
@@ -18,14 +28,13 @@ function Home() {
   const [pastWords, setPastWords] = useState<string[]>([]);
   const [allFutureLetters, setAllFutureLetters] =
     useState<string[]>(todaysLetters);
-
   const [selectedLetterBankIdx, setSelectedLetterBankIdx] =
     useState<number | null>(null);
   const [selectedWordLetterIdx, setSelectedWordLetterIdx] =
     useState<number | null>(null);
   const [selectedAction, setSelectedAction] =
     useState<'insert-before' | 'insert-after' | 'swap' | 'delete' | null>();
-
+  const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [score, setScore] = useState(0);
 
   const selectLetter = useCallback(
@@ -34,10 +43,13 @@ function Home() {
         setSelectedLetterBankIdx(null);
         return;
       }
-      setSelectedLetterBankIdx(idx);
+      if (idx !== null) {
+        setSelectedLetterBankIdx(idx);
+      } else return;
     },
     [selectedLetterBankIdx],
   );
+
   const selectWordLetter = useCallback(
     (idx: number) => {
       if (selectedWordLetterIdx === idx) {
@@ -48,6 +60,7 @@ function Home() {
     },
     [selectedWordLetterIdx],
   );
+
   const selectAction = useCallback(
     (action: 'insert-before' | 'insert-after' | 'swap' | 'delete') => {
       if (selectedAction === action) {
@@ -63,7 +76,7 @@ function Home() {
     if (selectedAction === 'delete' && selectedWordLetterIdx !== null) {
       const wordLetters = word.split('');
       wordLetters.splice(selectedWordLetterIdx, 1);
-      setWord(wordLetters.join(''));
+      checkWord(wordLetters.join(''));
       setSelectedAction(null);
       setSelectedWordLetterIdx(null);
       setSelectedLetterBankIdx(null);
@@ -80,7 +93,7 @@ function Home() {
       const wordLetters = word.split('');
       const letterBankLetter = letterBank[selectedLetterBankIdx];
       wordLetters[selectedWordLetterIdx] = letterBankLetter;
-      setWord(wordLetters.join(''));
+      checkWord(wordLetters.join(''));
       setSelectedAction(null);
       setSelectedWordLetterIdx(null);
       return;
@@ -89,7 +102,7 @@ function Home() {
       const wordLetters = word.split('');
       const letterBankLetter = letterBank[selectedLetterBankIdx];
       wordLetters.splice(selectedWordLetterIdx, 0, letterBankLetter);
-      setWord(wordLetters.join(''));
+      checkWord(wordLetters.join(''));
       setSelectedAction(null);
       setSelectedWordLetterIdx(null);
       setSelectedLetterBankIdx(null);
@@ -99,7 +112,7 @@ function Home() {
       const wordLetters = word.split('');
       const letterBankLetter = letterBank[selectedLetterBankIdx];
       wordLetters.splice(selectedWordLetterIdx + 1, 0, letterBankLetter);
-      setWord(wordLetters.join(''));
+      checkWord(wordLetters.join(''));
       setSelectedAction(null);
       setSelectedWordLetterIdx(null);
       setSelectedLetterBankIdx(null);
@@ -125,111 +138,104 @@ function Home() {
     [allFutureLetters, letterBank],
   );
 
-  const checkWord = useCallback(async () => {
-    if (word.length < 2 || word.length > 15) {
-      setWord(validatedWord);
-      return false;
-    }
-    if (pastWords.includes(word)) {
-      setWord(validatedWord);
-      return false;
-    }
+  const checkWord = useCallback(
+    async (wordToCheck: string) => {
+      setErrorMessage(undefined);
 
-    // these shorter words for the initial set of letters 2/3/4, we preload the
-    // dicts to make checking instant
-    if (word.length === 3) {
-      const valid = words3.has(word.toUpperCase());
-      if (valid) {
-        setValidatedWord(word);
-        if (selectedLetterBankIdx)
-          popToLetterBankPosition(selectedLetterBankIdx);
-        setScore(score + 1);
-        setPastWords([...pastWords, word]);
-        return true;
-      } else {
-        undo();
-        // setWord(validatedWord);
+      if (wordToCheck.length < 2 || wordToCheck.length > 15) {
+        setSelectedLetterBankIdx(null);
+        setErrorMessage('Word too short!');
         return false;
       }
-    }
-    if (word.length === 2) {
-      // don't need to preload the dict for len === 1 since that's an invalid len
-      const valid = words2.has(word.toUpperCase());
-      if (valid) {
-        setValidatedWord(word);
-        if (selectedLetterBankIdx)
-          popToLetterBankPosition(selectedLetterBankIdx);
-        setScore(score + 1);
-        setPastWords([...pastWords, word]);
-        return true;
-      } else {
-        // setWord(validatedWord);
-        undo();
+
+      if (pastWords.includes(wordToCheck)) {
+        setErrorMessage(`You've already used "${wordToCheck}"`);
+        setSelectedLetterBankIdx(null);
         return false;
       }
-    }
-    if (word.length === 4) {
-      // use the preloaded 4-letter dict, but kick off preload for larger dict
-      const _wordsPlus = import(`../utils/dicts/${word.length + 1}`);
-      const valid = words4.has(word.toUpperCase());
+
+      // these shorter words for the initial set of letters 2/3/4, we preload the
+      // dicts to make checking instant
+      if (wordToCheck.length === 3) {
+        const valid = words3.has(wordToCheck.toUpperCase());
+        if (valid) {
+          setWord(wordToCheck);
+          if (selectedLetterBankIdx)
+            popToLetterBankPosition(selectedLetterBankIdx);
+          setScore(score + 1);
+          setPastWords([...pastWords, wordToCheck]);
+          setSelectedLetterBankIdx(null);
+          return true;
+        } else {
+          setErrorMessage(`"${wordToCheck}" is not a word!`);
+          setSelectedLetterBankIdx(null);
+          return false;
+        }
+      }
+      if (wordToCheck.length === 2) {
+        // don't need to preload the dict for len === 1 since that's an invalid len
+        const valid = words2.has(wordToCheck.toUpperCase());
+        if (valid) {
+          setWord(wordToCheck);
+          if (selectedLetterBankIdx)
+            popToLetterBankPosition(selectedLetterBankIdx);
+          setScore(score + 1);
+          setPastWords([...pastWords, wordToCheck]);
+          setSelectedLetterBankIdx(null);
+          return true;
+        } else {
+          setErrorMessage(`"${wordToCheck}" is not a word!`);
+          setSelectedLetterBankIdx(null);
+          return false;
+        }
+      }
+      if (wordToCheck.length === 4) {
+        // use the preloaded 4-letter dict, but kick off preload for larger dict
+        const _wordsPlus = import(`../utils/dicts/${wordToCheck.length + 1}`);
+        const valid = words4.has(wordToCheck.toUpperCase());
+        if (valid) {
+          setWord(wordToCheck);
+          if (selectedLetterBankIdx)
+            popToLetterBankPosition(selectedLetterBankIdx);
+          setScore(score + 1);
+          setPastWords([...pastWords, wordToCheck]);
+          setSelectedLetterBankIdx(null);
+          return true;
+        } else {
+          setErrorMessage(`"${wordToCheck}" is not a word!`);
+          setSelectedLetterBankIdx(null);
+          return false;
+        }
+      }
+
+      // just used for preloading, not for checking
+      const _wordsMinus = import(`../utils/dicts/${wordToCheck.length - 1}`);
+      const _wordsPlus = import(`../utils/dicts/${wordToCheck.length + 1}`);
+      const dict: Set<string> | undefined = (
+        await import(`../utils/dicts/${wordToCheck.length}`)
+      )?.words;
+
+      const valid = dict?.has(wordToCheck.toUpperCase());
       if (valid) {
-        setValidatedWord(word);
-        if (selectedLetterBankIdx)
-          popToLetterBankPosition(selectedLetterBankIdx);
+        setWord(wordToCheck);
         setScore(score + 1);
-        setPastWords([...pastWords, word]);
+        setPastWords([...pastWords, wordToCheck]);
+        setSelectedLetterBankIdx(null);
         return true;
       } else {
-        // setWord(validatedWord);
-        undo();
+        setErrorMessage(`"${wordToCheck}" is not a word!`);
+        setSelectedLetterBankIdx(null);
         return false;
       }
-    }
-
-    // just used for preloading, not for checking
-    const _wordsMinus = import(`../utils/dicts/${word.length - 1}`);
-    const _wordsPlus = import(`../utils/dicts/${word.length + 1}`);
-    const dict: Set<string> | undefined = (
-      await import(`../utils/dicts/${word.length}`)
-    )?.words;
-
-    const valid = dict?.has(word.toUpperCase());
-    if (valid) {
-      setValidatedWord(word);
-      setScore(score + 1);
-      setPastWords([...pastWords, word]);
-      return true;
-    } else {
-      undo();
-      // setWord(validatedWord);
-      return false;
-    }
-  }, [word, allFutureLetters, score]);
-
-  const undo = useCallback(() => {
-    if (word === validatedWord) {
-      return;
-    }
-    setWord(validatedWord);
-    setSelectedLetterBankIdx(null);
-    setSelectedWordLetterIdx(null);
-    setSelectedAction(null);
-  }, [word, validatedWord]);
+    },
+    [allFutureLetters, score],
+  );
 
   const wordLetters = word.split('');
   return (
     <div className="w-full flex flex-col items-center">
-      <h2>Score: {score}</h2>
-      {pastWords.length ? (
-        <ol>
-          {pastWords.map((word, idx) => (
-            <li key={idx} className="inline-block mr-2">
-              {idx > 0 ? <span className="mr-2">•</span> : ''}
-              {word}
-            </li>
-          ))}
-        </ol>
-      ) : null}
+      <ScoreAndHistory score={score} history={pastWords} />
+
       <div className="mt-8 -mr-2">
         <ul className="block">
           {wordLetters.map((letter, idx) => (
@@ -237,6 +243,7 @@ function Home() {
               <LetterButton
                 selected={selectedWordLetterIdx === idx}
                 onClick={() => selectWordLetter(idx)}
+                last={idx === wordLetters.length - 1}
               >
                 {letter}
               </LetterButton>
@@ -247,47 +254,63 @@ function Home() {
       {selectedWordLetterIdx !== null ? (
         <div className="mt-4 flex flex-row justify-center">
           <button
-            className={`mr-4 px-2 border border-black rounded ${
+            className={`h-10 w-10 min-w-[40px] mr-4 mb-4 rounded flex items-center justify-center ${
               selectedAction === 'insert-before'
-                ? 'bg-[#008000] text-white font-bold border-0'
-                : ''
+                ? 'bg-[#008000]'
+                : 'bg-white border border-black'
             }`}
             onClick={() => selectAction('insert-before')}
+            aria-label="Insert letter before"
           >
-            Add before
+            <BsArrowLeft
+              className={`h-6 w-6 ${
+                selectedAction === 'insert-before' ? 'fill-white' : 'fill-black'
+              }`}
+            />
           </button>
           <button
-            className={`mr-4 px-2 border border-black rounded ${
+            className={`h-10 w-10 min-w-[40px] mr-4 mb-4 rounded flex items-center justify-center ${
               selectedAction === 'swap'
-                ? 'bg-[#008000] text-white font-bold border-0'
-                : ''
+                ? 'bg-[#008000]'
+                : 'bg-white border border-black'
             }`}
             onClick={() => selectAction('swap')}
+            aria-label="Swap letter"
           >
-            Swap
+            <BsArrowDownUp
+              className={`h-6 w-6 ${
+                selectedAction === 'swap' ? 'fill-white' : 'fill-black'
+              }`}
+            />
           </button>
           <button
-            className={`px-2 border border-black rounded mr-4 ${
+            className={`h-10 w-10 min-w-[40px] mr-4 mb-4 rounded flex items-center justify-center ${
               selectedAction === 'insert-after'
-                ? 'bg-[#008000] text-white font-bold border-0'
-                : ''
+                ? 'bg-[#008000]'
+                : 'bg-white border border-black'
             }`}
             onClick={() => selectAction('insert-after')}
+            aria-label="Insert letter after"
           >
-            Add after
+            <BsArrowRight
+              className={`h-6 w-6 ${
+                selectedAction === 'insert-after' ? 'fill-white' : 'fill-black'
+              }`}
+            />
           </button>
           <button
-            className={`px-2 border border-black rounded focus:outline-[#800000] ${
-              selectedAction === 'delete'
-                ? 'bg-[#800000] text-white font-bold border-0'
-                : ''
-            }`}
+            className={`h-10 w-10 min-w-[40px] mb-4 rounded bg-[#800000] flex items-center justify-center`}
             onClick={() => selectAction('delete')}
+            aria-label="Delete selected letter"
           >
-            Delete
+            <BsTrash3 className="fill-white h-6 w-6" />
           </button>
         </div>
-      ) : null}
+      ) : (
+        <div className="h-10 mt-4 mb-4 text-[#800000] font-bold">
+          {errorMessage || ''}
+        </div>
+      )}
 
       <div className="flex flex-row flex-wrap mt-8 max-w-[300px] -mr-4">
         <ul>
@@ -296,6 +319,7 @@ function Home() {
               <LetterButton
                 selected={selectedLetterBankIdx === idx}
                 onClick={() => selectLetter(idx)}
+                disabled={selectedWordLetterIdx === null}
               >
                 {letter}
               </LetterButton>
@@ -303,36 +327,34 @@ function Home() {
           ))}
         </ul>
       </div>
-
-      {word !== validatedWord ? (
-        <div className="mt-8">
-          <button
-            className="px-2 h-10 border border-black rounded mr-4"
-            onClick={() => undo()}
-          >
-            Undo
-          </button>
-          <button
-            className="px-2 h-10 border border-black rounded"
-            onClick={() => checkWord()}
-          >
-            Check
-          </button>
-        </div>
-      ) : null}
     </div>
   );
 }
 
 export default Home;
 
-const LetterButton = ({ onClick, children, selected }) => {
+const LetterButton = ({
+  onClick,
+  children,
+  selected,
+  disabled,
+  last,
+}: {
+  onClick: () => void;
+  children: string;
+  selected: boolean;
+  disabled?: boolean;
+  last?: boolean;
+}) => {
   return (
     <button
-      className={`h-10 w-10 min-w-[40px] mr-4 mb-4 text-xl text-center border border-black rounded flex justify-center items-center ${
+      className={`h-10 w-10 min-w-[40px] ${
+        last ? '' : 'mr-4'
+      } mb-4 text-xl text-center border border-black rounded flex justify-center items-center ${
         selected ? 'bg-[#008000] text-white font-bold border-0' : ''
-      }`}
+      } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}}`}
       onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </button>
