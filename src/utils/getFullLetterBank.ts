@@ -29,32 +29,61 @@ const items = [
   'Y',
   'Z',
 ];
-const weights = [
-  15, // A
+const weights_adj = [
+  10, // A
   10, // B
-  23, // C
+  15, // C
   17, // D
-  15, // E
+  10, // E
   9, // F
   12, // G
   15, // H
-  15, // I
+  10, // I
   1, // J
   5, // K
-  27, // L
+  15, // L
   15, // M
-  25, // N
-  15, // O
+  20, // N
+  10, // O
   16, // P
   1, // Q
   25, // R
   15, // S
   25, // T
-  15, // U
+  10, // U
   5, // V
   6, // W
   1, // X
-  9, // Y
+  5, // Y
+  1, // Z
+];
+
+const weights = [
+  10, // A
+  10, // B
+  10, // C
+  10, // D
+  10, // E
+  10, // F
+  10, // G
+  10, // H
+  10, // I
+  10, // J
+  10, // K
+  10, // L
+  10, // M
+  10, // N
+  10, // O
+  10, // P
+  1, // Q
+  10, // R
+  10, // S
+  10, // T
+  10, // U
+  2, // V
+  10, // W
+  1, // X
+  10, // Y
   1, // Z
 ];
 const totalWeight = weights.reduce((acc, weight) => acc + weight, 0);
@@ -102,7 +131,7 @@ export function weightedRandom(
   // - range for the random number is [0...8]
   const maxCumulativeWeight = cumulativeWeights[cumulativeWeights.length - 1];
   const random = seedrandom(seed);
-  const randomNumber = maxCumulativeWeight * random(); // Math.random();
+  const randomNumber = maxCumulativeWeight * random();
 
   // Picking the random item based on its weight.
   // The items with higher weight will be picked more often.
