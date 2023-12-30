@@ -11,8 +11,9 @@ import {
 } from 'react-icons/bs';
 import ScoreAndHistory from '../components/scoreAndHistory';
 import LetterButton from '../components/letterButton';
+import clsx from 'clsx';
 
-const INITIAL_WORD = 'AXE';
+const INITIAL_WORD = 'POT';
 
 function Home() {
   const todaysLetters = getFullLetterBank();
@@ -33,6 +34,7 @@ function Home() {
     useState<'insert-before' | 'insert-after' | 'swap' | 'delete' | null>();
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [score, setScore] = useState(0);
+  const [deletionsRemaining, setDeletionsRemaining] = useState(2);
 
   const selectLetter = useCallback(
     (idx: number) => {
@@ -73,7 +75,11 @@ function Home() {
     if (selectedAction === 'delete' && selectedWordLetterIdx !== null) {
       const wordLetters = word.split('');
       wordLetters.splice(selectedWordLetterIdx, 1);
-      checkWord(wordLetters.join(''));
+      checkWord(wordLetters.join(''), true).then((valid) => {
+        if (valid) {
+          setDeletionsRemaining(deletionsRemaining - 1);
+        }
+      });
       setSelectedAction(null);
       setSelectedWordLetterIdx(null);
       setSelectedLetterBankIdx(null);
@@ -137,7 +143,7 @@ function Home() {
   );
 
   const checkWord = useCallback(
-    async (wordToCheck: string) => {
+    async (wordToCheck: string, allowPreviousWords?: boolean) => {
       setErrorMessage(undefined);
 
       if (wordToCheck.length < 2 || wordToCheck.length > 15) {
@@ -146,7 +152,7 @@ function Home() {
         return false;
       }
 
-      if (pastWords.includes(wordToCheck)) {
+      if (!allowPreviousWords && pastWords.includes(wordToCheck)) {
         setErrorMessage(`You've already used "${wordToCheck}"`);
         setSelectedLetterBankIdx(null);
         return false;
@@ -297,10 +303,24 @@ function Home() {
             />
           </button>
           <button
-            className={`h-10 w-10 min-w-[40px] mb-4 rounded bg-[#800000] flex items-center justify-center`}
+            className={clsx(
+              `relative h-10 w-10 min-w-[40px] mb-4 rounded bg-[#800000] flex items-center justify-center`,
+              deletionsRemaining === 0 && 'bg-gray-400',
+            )}
             onClick={() => selectAction('delete')}
-            aria-label="Delete selected letter"
+            aria-label={`Delete selected letter. ${deletionsRemaining} deletions remaining.`}
+            disabled={deletionsRemaining === 0}
           >
+            <div
+              className={clsx(
+                'w-5 h-5 flex items-center justify-center absolute -top-2 -right-2 rounded-full border border-[#800000]',
+                deletionsRemaining === 0
+                  ? 'bg-[#800000] text-white font-bold'
+                  : 'bg-white',
+              )}
+            >
+              {deletionsRemaining}
+            </div>
             <BsTrash3 className="fill-white h-6 w-6" />
           </button>
         </div>
