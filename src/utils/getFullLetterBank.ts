@@ -1,7 +1,7 @@
 import seedrandom from 'seedrandom';
 
 // all letters
-const items = [
+export const letters = [
   'A',
   'B',
   'C',
@@ -68,7 +68,7 @@ const weights = [
   10, // G
   10, // H
   10, // I
-  10, // J
+  3, // J
   10, // K
   10, // L
   10, // M
@@ -80,7 +80,7 @@ const weights = [
   10, // S
   10, // T
   10, // U
-  2, // V
+  5, // V
   10, // W
   1, // X
   10, // Y
@@ -152,8 +152,8 @@ export default function getFullLetterBank(seedOverride?: string): string[] {
     ? seedOverride
     : `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
   const letterBank: Array<string | undefined> = [];
-  for (let i = 0; i < 100; i++) {
-    const letter = weightedRandom(items, relativeWeights, `${seed}${i}`);
+  for (let i = 0; i < 1000; i++) {
+    const letter = weightedRandom(letters, relativeWeights, `${seed}${i}`);
     letterBank.push(letter);
   }
   return letterBank.filter(isDefined);

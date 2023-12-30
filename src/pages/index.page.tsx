@@ -119,6 +119,7 @@ function Home() {
 
   const popToLetterBankPosition = useCallback(
     (i: number) => {
+      console.log({ i, allFutureLetters, letterBank });
       const futureLetters = [...allFutureLetters];
       const letter = futureLetters.pop();
       setAllFutureLetters(futureLetters);
@@ -225,7 +226,7 @@ function Home() {
         return false;
       }
     },
-    [allFutureLetters, score],
+    [allFutureLetters, score, selectedLetterBankIdx],
   );
 
   const wordLetters = word.split('');
