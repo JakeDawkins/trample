@@ -22,6 +22,6 @@ body {
 }
 
 *:focus {
-  outline: 2px solid #008000;
+  outline: 2px solid #15803d;
   outline-offset: 4px;
 }

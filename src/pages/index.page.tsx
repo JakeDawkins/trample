@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { words as words2 } from '../utils/dicts/2';
 import { words as words3 } from '../utils/dicts/3';
 import { words as words4 } from '../utils/dicts/4';
-import getFullLetterBank from '../utils/getFullLetterBank';
+import getFullLetterBank, { pointsForWord } from '../utils/getFullLetterBank';
 import {
   BsArrowDownUp,
   BsArrowLeft,
@@ -12,10 +12,12 @@ import {
 import ScoreAndHistory from '../components/scoreAndHistory';
 import LetterButton from '../components/letterButton';
 import clsx from 'clsx';
+import Modal from '../components/modal';
 
 const INITIAL_WORD = 'POT';
 
 function Home() {
+  const [showHelpModal, setShowHelpModal] = useState(true);
   const todaysLetters = getFullLetterBank();
   const [word, setWord] = useState(INITIAL_WORD);
   const [letterBank, setLetterBank] = useState<string[]>(
@@ -23,7 +25,7 @@ function Home() {
     // removes from initial list
     todaysLetters.splice(0, 10),
   );
-  const [pastWords, setPastWords] = useState<string[]>([]);
+  const [pastWords, setPastWords] = useState<string[]>([INITIAL_WORD]);
   const [allFutureLetters, setAllFutureLetters] =
     useState<string[]>(todaysLetters);
   const [selectedLetterBankIdx, setSelectedLetterBankIdx] =
@@ -125,7 +127,6 @@ function Home() {
 
   const popToLetterBankPosition = useCallback(
     (i: number) => {
-      console.log({ i, allFutureLetters, letterBank });
       const futureLetters = [...allFutureLetters];
       const letter = futureLetters.pop();
       setAllFutureLetters(futureLetters);
@@ -166,7 +167,7 @@ function Home() {
           setWord(wordToCheck);
           if (selectedLetterBankIdx)
             popToLetterBankPosition(selectedLetterBankIdx);
-          setScore(score + 1);
+          setScore(score + pointsForWord(wordToCheck));
           setPastWords([...pastWords, wordToCheck]);
           setSelectedLetterBankIdx(null);
           return true;
@@ -183,7 +184,7 @@ function Home() {
           setWord(wordToCheck);
           if (selectedLetterBankIdx)
             popToLetterBankPosition(selectedLetterBankIdx);
-          setScore(score + 1);
+          setScore(score + pointsForWord(wordToCheck));
           setPastWords([...pastWords, wordToCheck]);
           setSelectedLetterBankIdx(null);
           return true;
@@ -201,7 +202,7 @@ function Home() {
           setWord(wordToCheck);
           if (selectedLetterBankIdx)
             popToLetterBankPosition(selectedLetterBankIdx);
-          setScore(score + 1);
+          setScore(score + pointsForWord(wordToCheck));
           setPastWords([...pastWords, wordToCheck]);
           setSelectedLetterBankIdx(null);
           return true;
@@ -222,7 +223,7 @@ function Home() {
       const valid = dict?.has(wordToCheck.toUpperCase());
       if (valid) {
         setWord(wordToCheck);
-        setScore(score + 1);
+        setScore(score + pointsForWord(wordToCheck));
         setPastWords([...pastWords, wordToCheck]);
         setSelectedLetterBankIdx(null);
         return true;
@@ -237,115 +238,147 @@ function Home() {
 
   const wordLetters = word.split('');
   return (
-    <div className="w-full flex flex-col items-center">
-      <ScoreAndHistory score={score} history={pastWords} />
+    <>
+      <Modal
+        isOpen={showHelpModal}
+        setIsOpen={setShowHelpModal}
+        title="How to play"
+        description="A brief intro to trample"
+      >
+        <p className="text-lg font-bold">The Rules</p>
+        <ol className="list-decimal list-inside">
+          <li>The word at the top is your "active" word</li>
+          <li>
+            Each turn, you pick one letter from the "active" word and replace it
+            with a letter from the letter bank, insert a letter before or after
+            it, or delete it.
+          </li>
+          <li>You can only delete 2 letters per game</li>
+          <li>You only get to take one action per turn</li>
+          <li>Every turn must result in a new valid word</li>
+          <li>The game ends when you can't make any new words</li>
+        </ol>
+        <button
+          className={
+            'bg-green-700 hover:bg-green-800 text-white rounded mt-4 font-bold py-2'
+          }
+          onClick={() => setShowHelpModal(false)}
+        >
+          Let's play!
+        </button>
+      </Modal>
+      <div className="w-full flex flex-col items-center">
+        <ScoreAndHistory score={score} history={pastWords} />
 
-      <div className="mt-8 -mr-2">
-        <ul className="block">
-          {wordLetters.map((letter, idx) => (
-            <li key={idx} className="inline-block">
-              <LetterButton
-                selected={selectedWordLetterIdx === idx}
-                onClick={() => selectWordLetter(idx)}
-                last={idx === wordLetters.length - 1}
-              >
-                {letter}
-              </LetterButton>
-            </li>
-          ))}
-        </ul>
-      </div>
-      {selectedWordLetterIdx !== null ? (
-        <div className="mt-4 flex flex-row justify-center">
-          <button
-            className={`h-10 w-10 min-w-[40px] mr-4 mb-4 rounded flex items-center justify-center ${
-              selectedAction === 'insert-before'
-                ? 'bg-[#008000]'
-                : 'bg-white border border-black'
-            }`}
-            onClick={() => selectAction('insert-before')}
-            aria-label="Insert letter before"
-          >
-            <BsArrowLeft
-              className={`h-6 w-6 ${
-                selectedAction === 'insert-before' ? 'fill-white' : 'fill-black'
+        <div className="mt-8">
+          <ul className="block">
+            {wordLetters.map((letter, idx) => (
+              <li key={idx} className="inline-block">
+                <LetterButton
+                  selected={selectedWordLetterIdx === idx}
+                  onClick={() => selectWordLetter(idx)}
+                  last={idx === wordLetters.length - 1}
+                  letter={letter}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+        {selectedWordLetterIdx !== null ? (
+          <div className="mt-4 flex flex-row justify-center">
+            <button
+              className={`h-10 w-10 min-w-[40px] mr-4 mb-4 rounded flex items-center justify-center ${
+                selectedAction === 'insert-before'
+                  ? 'bg-green-700'
+                  : 'bg-white border border-black'
               }`}
-            />
-          </button>
-          <button
-            className={`h-10 w-10 min-w-[40px] mr-4 mb-4 rounded flex items-center justify-center ${
-              selectedAction === 'swap'
-                ? 'bg-[#008000]'
-                : 'bg-white border border-black'
-            }`}
-            onClick={() => selectAction('swap')}
-            aria-label="Swap letter"
-          >
-            <BsArrowDownUp
-              className={`h-6 w-6 ${
-                selectedAction === 'swap' ? 'fill-white' : 'fill-black'
-              }`}
-            />
-          </button>
-          <button
-            className={`h-10 w-10 min-w-[40px] mr-4 mb-4 rounded flex items-center justify-center ${
-              selectedAction === 'insert-after'
-                ? 'bg-[#008000]'
-                : 'bg-white border border-black'
-            }`}
-            onClick={() => selectAction('insert-after')}
-            aria-label="Insert letter after"
-          >
-            <BsArrowRight
-              className={`h-6 w-6 ${
-                selectedAction === 'insert-after' ? 'fill-white' : 'fill-black'
-              }`}
-            />
-          </button>
-          <button
-            className={clsx(
-              `relative h-10 w-10 min-w-[40px] mb-4 rounded bg-[#800000] flex items-center justify-center`,
-              deletionsRemaining === 0 && 'bg-gray-400',
-            )}
-            onClick={() => selectAction('delete')}
-            aria-label={`Delete selected letter. ${deletionsRemaining} deletions remaining.`}
-            disabled={deletionsRemaining === 0}
-          >
-            <div
-              className={clsx(
-                'w-5 h-5 flex items-center justify-center absolute -top-2 -right-2 rounded-full border border-[#800000]',
-                deletionsRemaining === 0
-                  ? 'bg-[#800000] text-white font-bold'
-                  : 'bg-white',
-              )}
+              onClick={() => selectAction('insert-before')}
+              aria-label="Insert letter before"
             >
-              {deletionsRemaining}
-            </div>
-            <BsTrash3 className="fill-white h-6 w-6" />
-          </button>
-        </div>
-      ) : (
-        <div className="h-10 mt-4 mb-4 text-[#800000] font-bold">
-          {errorMessage || ''}
-        </div>
-      )}
-
-      <div className="flex flex-row flex-wrap mt-8 max-w-[300px] -mr-4">
-        <ul>
-          {letterBank.map((letter, idx) => (
-            <li key={idx} className="inline-block">
-              <LetterButton
-                selected={selectedLetterBankIdx === idx}
-                onClick={() => selectLetter(idx)}
-                disabled={selectedWordLetterIdx === null}
+              <BsArrowLeft
+                className={`h-6 w-6 ${
+                  selectedAction === 'insert-before'
+                    ? 'fill-white'
+                    : 'fill-black'
+                }`}
+              />
+            </button>
+            <button
+              className={`h-10 w-10 min-w-[40px] mr-4 mb-4 rounded flex items-center justify-center ${
+                selectedAction === 'swap'
+                  ? 'bg-green-700'
+                  : 'bg-white border border-black'
+              }`}
+              onClick={() => selectAction('swap')}
+              aria-label="Swap letter"
+            >
+              <BsArrowDownUp
+                className={`h-6 w-6 ${
+                  selectedAction === 'swap' ? 'fill-white' : 'fill-black'
+                }`}
+              />
+            </button>
+            <button
+              className={`h-10 w-10 min-w-[40px] mr-4 mb-4 rounded flex items-center justify-center ${
+                selectedAction === 'insert-after'
+                  ? 'bg-green-700'
+                  : 'bg-white border border-black'
+              }`}
+              onClick={() => selectAction('insert-after')}
+              aria-label="Insert letter after"
+            >
+              <BsArrowRight
+                className={`h-6 w-6 ${
+                  selectedAction === 'insert-after'
+                    ? 'fill-white'
+                    : 'fill-black'
+                }`}
+              />
+            </button>
+            <button
+              className={clsx(
+                `relative h-10 w-10 min-w-[40px] mb-4 rounded bg-red-800 flex items-center justify-center`,
+                deletionsRemaining === 0 && 'bg-gray-400',
+              )}
+              onClick={() => selectAction('delete')}
+              aria-label={`Delete selected letter. ${deletionsRemaining} deletions remaining.`}
+              disabled={deletionsRemaining === 0}
+            >
+              <div
+                className={clsx(
+                  'w-5 h-5 flex items-center justify-center absolute -top-2 -right-2 rounded-full border border-red-800',
+                  deletionsRemaining === 0
+                    ? 'bg-red-800 text-white font-bold'
+                    : 'bg-white',
+                )}
               >
-                {letter}
-              </LetterButton>
-            </li>
-          ))}
-        </ul>
+                {deletionsRemaining}
+              </div>
+              <BsTrash3 className="fill-white h-6 w-6" />
+            </button>
+          </div>
+        ) : (
+          <div className="h-10 mt-4 mb-4 text-red-800 font-bold">
+            {errorMessage || ''}
+          </div>
+        )}
+
+        <div className="flex flex-row flex-wrap mt-8 max-w-[300px] -mr-4">
+          <ul>
+            {letterBank.map((letter, idx) => (
+              <li key={idx} className="inline-block">
+                <LetterButton
+                  selected={selectedLetterBankIdx === idx}
+                  onClick={() => selectLetter(idx)}
+                  disabled={selectedWordLetterIdx === null}
+                  letter={letter}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
