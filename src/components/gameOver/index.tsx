@@ -24,7 +24,7 @@ export default function GameOver(props: GameOverProps) {
       </h2>
       {props.forfeit ? <p className="text-center">You've gave up</p> : null}
 
-      <div className="flex flex-col border rounded border-green-700 mt-8 overflow-hidden">
+      <div className="flex flex-col border rounded border-black mt-8 overflow-hidden">
         <div className="p-4">
           <p className="text-lg font-bold">Trample #{getDayNumber()}</p>
           <p className="mt-2">
@@ -45,7 +45,7 @@ export default function GameOver(props: GameOverProps) {
         {typeof window?.navigator?.share !== 'undefined' ? (
           <div className="flex flex-col items-center w-full ">
             <button
-              className="bg-green-700 hover:bg-green-800 text-white px-4 py-2 w-full"
+              className="bg-black hover:bg-gray-900 text-white px-4 py-2 w-full"
               onClick={() => {
                 window.navigator.share({
                   text: `Trample #${getDayNumber()}\n🏆 Score: ${
