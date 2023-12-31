@@ -25,7 +25,7 @@ export default function LetterButton({
       )}
       onClick={onClick}
       disabled={disabled}
-      aria-aria-label={`${letter}: ${value} points`}
+      aria-label={`${letter}: ${value} points`}
     >
       {letter}
       <div className="absolute top-[0px] right-[3px] text-xs font-normal">

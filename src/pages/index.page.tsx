@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { words as words2 } from '../utils/dicts/2';
 import { words as words3 } from '../utils/dicts/3';
 import { words as words4 } from '../utils/dicts/4';
@@ -13,11 +13,14 @@ import ScoreAndHistory from '../components/scoreAndHistory';
 import LetterButton from '../components/letterButton';
 import clsx from 'clsx';
 import Modal from '../components/modal';
+import { canMakeWord } from '../utils/evaluation';
+import { endGame, getStats, isGameOver } from '../utils/endGame';
+import GameOver from '../components/gameOver';
 
 const INITIAL_WORD = 'POT';
 
 function Home() {
-  const [showHelpModal, setShowHelpModal] = useState(true);
+  const [showHelpModal, setShowHelpModal] = useState(false);
   const todaysLetters = getFullLetterBank();
   const [word, setWord] = useState(INITIAL_WORD);
   const [letterBank, setLetterBank] = useState<string[]>(
@@ -37,6 +40,24 @@ function Home() {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [score, setScore] = useState(0);
   const [deletionsRemaining, setDeletionsRemaining] = useState(2);
+  const [gameOver, setGameOver] = useState<boolean | undefined>(undefined);
+  const [forfeit, setForfeit] = useState(false);
+
+  useEffect(() => {
+    if (typeof localStorage !== 'undefined') {
+      const helpDismissed = localStorage.getItem('trample-help-dismissed');
+      console.log({ helpDismissed });
+      if (!helpDismissed) {
+        setShowHelpModal(true);
+      }
+    }
+  }, []);
+
+  const dismissHelpModal = () => {
+    console.log('DISMISS');
+    localStorage.setItem('trample-help-dismissed', 'true');
+    setShowHelpModal(false);
+  };
 
   const selectLetter = useCallback(
     (idx: number) => {
@@ -236,12 +257,55 @@ function Home() {
     [allFutureLetters, score, selectedLetterBankIdx],
   );
 
+  const endGameStats = useMemo(() => {
+    if (!gameOver) return;
+    return getStats();
+  }, [gameOver]);
+
+  useEffect(() => {
+    // Auto-end game if no more words can be made
+    canMakeWord(word, letterBank, deletionsRemaining, pastWords).then(
+      (canMakeWord) => {
+        if (canMakeWord) return;
+        setGameOver(true);
+        // save score
+        endGame({ score });
+      },
+    );
+
+    // already completed one game today
+    setGameOver(isGameOver());
+  }, [word, letterBank, isGameOver, pastWords, deletionsRemaining, score]);
+
+  const handleForfeit = useCallback(() => {
+    setGameOver(true);
+    setForfeit(true);
+    endGame({ score });
+  }, [score]);
+
+  if (typeof gameOver === 'undefined') {
+    return;
+  }
+
+  console.log(endGameStats);
+  if ((gameOver && score) || endGameStats?.todaysBestScore) {
+    return (
+      <GameOver
+        score={score || endGameStats?.todaysOneTimeScore || 0}
+        bestScore={endGameStats?.bestScore}
+        numWords={endGameStats?.numWords}
+        longestWord={endGameStats?.longestWord}
+        forfeit={forfeit}
+      />
+    );
+  }
+
   const wordLetters = word.split('');
   return (
     <>
       <Modal
         isOpen={showHelpModal}
-        setIsOpen={setShowHelpModal}
+        handleClose={dismissHelpModal}
         title="How to play"
         description="A brief intro to trample"
       >
@@ -256,18 +320,42 @@ function Home() {
           <li>You can only delete 2 letters per game</li>
           <li>You only get to take one action per turn</li>
           <li>Every turn must result in a new valid word</li>
+          <li>
+            You can only reuse a previous word if you make it by deleting a
+            letter
+          </li>
           <li>The game ends when you can't make any new words</li>
         </ol>
+
+        <p>
+          There is one starting word and one letter bank per day, so make it
+          count!
+        </p>
         <button
           className={
             'bg-green-700 hover:bg-green-800 text-white rounded mt-4 font-bold py-2'
           }
-          onClick={() => setShowHelpModal(false)}
+          onClick={dismissHelpModal}
         >
           Let's play!
         </button>
       </Modal>
       <div className="w-full flex flex-col items-center">
+        <header className="flex justify-between w-full mt-4 mb-4 px-4">
+          <button
+            className={`rounded flex items-center justify-center border border-black px-2`}
+            onClick={() => setShowHelpModal(true)}
+          >
+            Help
+          </button>
+          <h1 className="text-4xl font-bold">Trample</h1>
+          <button
+            className={`rounded flex items-center justify-center border border-black px-2`}
+            onClick={handleForfeit}
+          >
+            Forfeit
+          </button>
+        </header>
         <ScoreAndHistory score={score} history={pastWords} />
 
         <div className="mt-8">

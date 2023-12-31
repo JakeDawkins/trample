@@ -4,35 +4,31 @@ import clsx from 'clsx';
 
 interface ModalProps {
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  handleClose: () => void;
   title: string;
   description: string;
 }
 
 export default function Modal({
   isOpen,
-  setIsOpen,
+  handleClose,
   description,
   title,
   children,
 }: PropsWithChildren<ModalProps>) {
   return (
-    <Dialog
-      open={isOpen}
-      onClose={() => setIsOpen(false)}
-      className="relative z-50"
-    >
+    <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
       {/* The backdrop, rendered as a fixed sibling to the panel container */}
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       {/* Full-screen container to center the panel */}
       <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
         <Dialog.Panel
           className={
-            'relative bg-white rounded max-w-[90%] max-h-[90%] overflow-y-scroll sm:p-2 lg:p-4'
+            'relative bg-white rounded max-w-[90%] max-h-[90%] overflow-y-scroll p-4'
           }
         >
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={handleClose}
             className={clsx(
               'hover:bg-gray-200',
               'flex rounded justify-center items-center h-10 w-10 absolute top-2 right-2',
