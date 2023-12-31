@@ -47,6 +47,7 @@ export default function GameOver(props: GameOverProps) {
                   text: `Trample #${getDayNumber()}\n${new Array(
                     props.longestWord,
                   )
+                    .fill('')
                     .map((_, i) => ['🟩', '🟦', '🟪', '🟥', '🟧', '🟨'][i % 6])
                     .join('')} Score: ${props.score}`,
                 });
