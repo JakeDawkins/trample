@@ -24,7 +24,7 @@ export default function GameOver(props: GameOverProps) {
       </h2>
       {props.forfeit ? <p className="text-center">You've gave up</p> : null}
 
-      <div className="flex flex-col border rounded border-black mt-8 overflow-hidden">
+      <div className="flex flex-col border rounded border-green-700 mt-8 overflow-hidden">
         <div className="p-4">
           <p className="font-bold">Trample #{getDayNumber()}</p>
           <p className="text-lg mt-2">{`${new Array(props.longestWord)
