@@ -12,7 +12,7 @@ interface GameOverProps {
 export default function GameOver(props: GameOverProps) {
   const resetGame = useCallback(() => {
     if (typeof localStorage !== 'undefined' && typeof window !== 'undefined') {
-      localStorage.removeItem('trample-stats');
+      localStorage.removeItem('trample-stats-2');
       window.location.reload();
     }
   }, []);
