@@ -17,7 +17,7 @@ import { canMakeWord } from '../utils/evaluation';
 import { endGame, getStats, isGameOver } from '../utils/endGame';
 import GameOver from '../components/gameOver';
 
-const INITIAL_WORD = 'POT';
+const INITIAL_WORD = 'RAM';
 
 function Home() {
   const [showHelpModal, setShowHelpModal] = useState(false);
