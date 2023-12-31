@@ -1,10 +1,9 @@
 interface Stats {
   date: string;
-  todaysBestScore: number;
-  bestScore: number;
-  todaysOneTimeScore: number;
-  numWords: number;
-  longestWord: number;
+  score: number;
+  bestScore?: number;
+  longestWord?: number;
+  numWords?: number;
 }
 
 function formatDate(date: Date): string {
@@ -16,34 +15,37 @@ function formatDate(date: Date): string {
 
 interface endGameOpts {
   score: number;
+  longestWord?: number;
 }
 
 // Save stats about today's game
-export function endGame({ score }: endGameOpts): Stats | undefined {
+export function endGame({
+  score,
+  longestWord,
+}: endGameOpts): Stats | undefined {
   if (typeof localStorage === 'undefined') return;
+
   const savedStats = localStorage.getItem('trample-stats');
   const stats = savedStats ? JSON.parse(savedStats) : {};
-  const { date, todaysBestScore, bestScore, todaysOneTimeScore } = stats;
 
+  const { date } = stats;
   const firstGameToday = !date || date !== formatDate(new Date());
+  if (!firstGameToday) return;
 
-  console.log({ firstGameToday, score });
-
-  localStorage.setItem(
-    'trample-stats',
-    JSON.stringify({
-      date: firstGameToday ? formatDate(new Date()) : date,
-      todaysOneTimeScore: firstGameToday ? score : todaysOneTimeScore || score,
-      bestScore: bestScore ? (score > bestScore ? score : bestScore) : score,
-      todaysBestScore: firstGameToday
+  const newStats: Stats = {
+    date: formatDate(new Date()),
+    // today's stats
+    score: score,
+    longestWord: longestWord,
+    // all-time stats
+    bestScore: stats.bestScore
+      ? score > stats.bestScore
         ? score
-        : todaysBestScore
-        ? score > todaysBestScore
-          ? score
-          : todaysBestScore
-        : score,
-    }),
-  );
+        : stats.bestScore
+      : score,
+  };
+
+  localStorage.setItem('trample-stats', JSON.stringify(newStats));
 
   return getStats();
 }

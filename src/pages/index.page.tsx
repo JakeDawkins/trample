@@ -42,6 +42,9 @@ function Home() {
   const [deletionsRemaining, setDeletionsRemaining] = useState(2);
   const [gameOver, setGameOver] = useState<boolean | undefined>(undefined);
   const [forfeit, setForfeit] = useState(false);
+  const longestWord = useMemo(() => {
+    return pastWords.sort((a, b) => b.length - a.length)?.[0]?.length || 0;
+  }, []);
 
   useEffect(() => {
     if (typeof localStorage !== 'undefined') {
@@ -269,7 +272,7 @@ function Home() {
         if (canMakeWord) return;
         setGameOver(true);
         // save score
-        endGame({ score });
+        endGame({ score, longestWord });
       },
     );
 
@@ -280,18 +283,18 @@ function Home() {
   const handleForfeit = useCallback(() => {
     setGameOver(true);
     setForfeit(true);
-    endGame({ score });
-  }, [score]);
+    endGame({ score, longestWord });
+  }, [score, longestWord]);
 
   if (typeof gameOver === 'undefined') {
     return;
   }
 
   console.log(endGameStats);
-  if ((gameOver && score) || endGameStats?.todaysBestScore) {
+  if ((gameOver && score) || endGameStats?.score) {
     return (
       <GameOver
-        score={score || endGameStats?.todaysOneTimeScore || 0}
+        score={score || endGameStats?.score || 0}
         bestScore={endGameStats?.bestScore}
         numWords={endGameStats?.numWords}
         longestWord={endGameStats?.longestWord}

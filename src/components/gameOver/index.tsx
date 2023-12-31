@@ -15,6 +15,7 @@ export default function GameOver(props: GameOverProps) {
       window.location.reload();
     }
   }, []);
+
   return (
     <div className="flex flex-col w-full h-full items-center justify-center">
       <h2 className="text-2xl text-center">
@@ -22,23 +23,45 @@ export default function GameOver(props: GameOverProps) {
       </h2>
       {props.forfeit ? <p className="text-center">You've gave up</p> : null}
 
-      <div className="flex flex-col border rounded border-black p-4 mt-8">
-        <p className="text-lg">🏅 Score: {props.score} 🏅</p>
-        {props.numWords ? (
-          <p className="text-lg mt-2">Number of words: {props.numWords}</p>
-        ) : null}
-        {props.longestWord ? (
-          <p className="text-lg mt-2">
-            {/* Longest Word: {props.longestWord}{' '} */}
-            Longest Word:
-            {new Array(props.longestWord).fill('◻️').join('')}
-          </p>
-        ) : null}
+      <div className="flex flex-col border rounded border-black mt-8 overflow-hidden">
+        <div className="p-4">
+          <p className="text-lg">🏅 Score: {props.score} 🏅</p>
+          {props.numWords ? (
+            <p className="text-lg mt-2">Number of words: {props.numWords}</p>
+          ) : null}
+          {props.longestWord ? (
+            <p className="text-lg mt-2">
+              {/* Longest Word: {props.longestWord}{' '} */}
+              Longest Word:
+              {new Array(props.longestWord).fill('◻️').join('')}
+            </p>
+          ) : null}
 
-        {props.bestScore ? (
-          <p className="text-lg mt-4">
-            Your Best Score Ever: {props.bestScore}
-          </p>
+          {props.bestScore ? (
+            <p className="text-lg mt-2">
+              Your Best Score Ever: {props.bestScore}
+            </p>
+          ) : null}
+        </div>
+        {typeof window?.navigator?.share !== 'undefined' ? (
+          <div className="flex flex-col items-center w-full ">
+            <button
+              className="bg-green-700 hover:bg-green-800 text-white px-4 py-2 w-full"
+              onClick={() => {
+                window.navigator.share({
+                  title: `Trample ${props.score}\n${new Array(props.longestWord)
+                    .fill('◻️')
+                    .join('')}`,
+                  text: `Trample ${props.score}\n${new Array(props.longestWord)
+                    .fill('◻️')
+                    .join('')}`,
+                  url: 'https://tramplegame1234.vercel.app',
+                });
+              }}
+            >
+              Share
+            </button>
+          </div>
         ) : null}
       </div>
 
