@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import getDayNumber from '../../utils/getDayNumber';
 
 interface GameOverProps {
   score: number;
@@ -25,17 +26,11 @@ export default function GameOver(props: GameOverProps) {
 
       <div className="flex flex-col border rounded border-black mt-8 overflow-hidden">
         <div className="p-4">
-          <p className="text-lg">🏅 Score: {props.score} 🏅</p>
-          {props.numWords ? (
-            <p className="text-lg mt-2">Number of words: {props.numWords}</p>
-          ) : null}
-          {props.longestWord ? (
-            <p className="text-lg mt-2">
-              {/* Longest Word: {props.longestWord}{' '} */}
-              Longest Word:
-              {new Array(props.longestWord).fill('◻️').join('')}
-            </p>
-          ) : null}
+          <p className="font-bold">Trample #{getDayNumber()}</p>
+          <p className="text-lg mt-2">{`${new Array(props.longestWord)
+            .fill('')
+            .map((_, i) => ['🟩', '🟦', '🟪', '🟥', '🟧', '🟨'][i % 6])
+            .join(' ')} Score: ${props.score}`}</p>
 
           {props.bestScore ? (
             <p className="text-lg mt-2">
@@ -49,13 +44,11 @@ export default function GameOver(props: GameOverProps) {
               className="bg-green-700 hover:bg-green-800 text-white px-4 py-2 w-full"
               onClick={() => {
                 window.navigator.share({
-                  title: `Trample ${props.score}\n${new Array(props.longestWord)
-                    .fill('◻️')
-                    .join('')}`,
-                  text: `Trample ${props.score}\n${new Array(props.longestWord)
-                    .fill('◻️')
-                    .join('')}`,
-                  url: 'https://tramplegame1234.vercel.app',
+                  text: `Trample #${getDayNumber()}\n${new Array(
+                    props.longestWord,
+                  )
+                    .map((_, i) => ['🟩', '🟦', '🟪', '🟥', '🟧', '🟨'][i % 6])
+                    .join('')} Score: ${props.score}`,
                 });
               }}
             >

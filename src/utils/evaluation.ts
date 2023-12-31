@@ -13,13 +13,20 @@
 export async function canMakeWord(
   word: string,
   letterBank: string[],
-  // Words will always be able to be deconstructed using deletions,
-  // UNLESS the current word is 2-letters long or there are no deletions remaining
   deletionsRemaining: number,
   previousWords: string[] = [],
 ): Promise<boolean> {
   // Can you make another word by deleting a letter from the word?
-  if (word.length > 2 && deletionsRemaining > 0) return true;
+  if (word.length > 2 && deletionsRemaining > 0) {
+    const dict = await import(`./dicts/${word.length - 1}`);
+    for (let i = 0; i < word.length; i++) {
+      const newWordLetters = [...word.split('')];
+      newWordLetters.splice(i, 1);
+      const newWordString = newWordLetters.join('').toUpperCase();
+      if (previousWords.includes(newWordString)) continue;
+      if (dict.words.has(newWordString)) return true;
+    }
+  }
 
   const dict = await import(`./dicts/${word.length}`);
   const dictPlusOne = await import(`./dicts/${word.length + 1}`);
@@ -28,18 +35,13 @@ export async function canMakeWord(
   // Can you make another word by replacing any letter in the word with a letter from the letter bank?
   for (let i = 0; i < wordLetters.length; i++) {
     for (let j = 0; j < letterBank.length; j++) {
-      if (letterBank[j] === wordLetters[i]) {
-        continue;
-      }
+      if (letterBank[j] === wordLetters[i]) continue;
       const newWordLetters = [...wordLetters];
       newWordLetters[i] = letterBank[j];
       const newWordString = newWordLetters.join('').toUpperCase();
       if (dict.words.has(newWordString.toUpperCase())) {
-        if (previousWords.includes(newWordString)) {
-          continue;
-        } else {
-          return true;
-        }
+        if (previousWords.includes(newWordString)) continue;
+        else return true;
       }
     }
   }
@@ -51,11 +53,8 @@ export async function canMakeWord(
       newWordLetters.splice(i, 0, letterBank[j]);
       const newWordString = newWordLetters.join('').toUpperCase();
       if (dictPlusOne.words.has(newWordString)) {
-        if (previousWords.includes(newWordString)) {
-          continue;
-        } else {
-          return true;
-        }
+        if (previousWords.includes(newWordString)) continue;
+        else return true;
       }
     }
   }

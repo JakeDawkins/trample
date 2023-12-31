@@ -30,6 +30,11 @@ describe('canMakeWord', () => {
     expect(result).toBe(true);
   });
 
+  it('returns true if a word can be made by deletion from the middle', async () => {
+    const result = await canMakeWord('short', [], 1);
+    expect(result).toBe(true);
+  });
+
   it('returns false if a word is too short for deletion', async () => {
     const result = await canMakeWord('at', [], 1);
     expect(result).toBe(false);

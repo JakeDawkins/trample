@@ -16,19 +16,24 @@ import Modal from '../components/modal';
 import { canMakeWord } from '../utils/evaluation';
 import { endGame, getStats, isGameOver } from '../utils/endGame';
 import GameOver from '../components/gameOver';
+import getDayNumber from '../utils/getDayNumber';
+import getTodaysWord from '../utils/getTodaysWord';
 
-const INITIAL_WORD = 'RAM';
+getDayNumber();
 
 function Home() {
+  // use this to track the word that's being played. If the game day is an old
+  // one, we'll need to load a new word and reset the game
+  const [currentGameDay, setCurrentGameDay] = useState(getDayNumber());
   const [showHelpModal, setShowHelpModal] = useState(false);
   const todaysLetters = getFullLetterBank();
-  const [word, setWord] = useState(INITIAL_WORD);
+  const [word, setWord] = useState(getTodaysWord());
   const [letterBank, setLetterBank] = useState<string[]>(
     // first 10 items of todaysLetters
     // removes from initial list
     todaysLetters.splice(0, 10),
   );
-  const [pastWords, setPastWords] = useState<string[]>([INITIAL_WORD]);
+  const [pastWords, setPastWords] = useState<string[]>([word]);
   const [allFutureLetters, setAllFutureLetters] =
     useState<string[]>(todaysLetters);
   const [selectedLetterBankIdx, setSelectedLetterBankIdx] =
@@ -44,12 +49,24 @@ function Home() {
   const [forfeit, setForfeit] = useState(false);
   const longestWord = useMemo(() => {
     return pastWords.sort((a, b) => b.length - a.length)?.[0]?.length || 0;
+  }, [pastWords]);
+
+  const resetGame = useCallback(() => {
+    window.location.reload();
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (currentGameDay !== getDayNumber()) {
+        resetGame();
+      }
+    }, 5000);
+    return clearInterval(interval);
+  }, [currentGameDay]);
 
   useEffect(() => {
     if (typeof localStorage !== 'undefined') {
       const helpDismissed = localStorage.getItem('trample-help-dismissed');
-      console.log({ helpDismissed });
       if (!helpDismissed) {
         setShowHelpModal(true);
       }
@@ -57,7 +74,6 @@ function Home() {
   }, []);
 
   const dismissHelpModal = () => {
-    console.log('DISMISS');
     localStorage.setItem('trample-help-dismissed', 'true');
     setShowHelpModal(false);
   };
@@ -290,7 +306,6 @@ function Home() {
     return;
   }
 
-  console.log(endGameStats);
   if ((gameOver && score) || endGameStats?.score) {
     return (
       <GameOver
