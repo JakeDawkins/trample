@@ -19,7 +19,7 @@ export default function GameOver(props: GameOverProps) {
 
   return (
     <div className="flex flex-col w-full h-full items-center justify-center">
-      <h2 className="text-2xl text-center">
+      <h2 className="text-2xl text-center font-bold">
         {props.forfeit ? 'Game Over' : "You've been trampled"}
       </h2>
       {props.forfeit ? <p className="text-center">You've gave up</p> : null}
