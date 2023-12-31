@@ -37,9 +37,7 @@ export default function GameOver(props: GameOverProps) {
           <p className="mt-2">🥇 Longest Word: {props.score}</p>
 
           {props.bestScore ? (
-            <p className="text-lg mt-2">
-              Your Best Score Ever: {props.bestScore}
-            </p>
+            <p className="mt-2">🔥 Your Best Score Ever: {props.bestScore}</p>
           ) : null}
         </div>
         {typeof window?.navigator?.share !== 'undefined' ? (
