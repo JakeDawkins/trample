@@ -400,6 +400,7 @@ function Home() {
               }`}
               onClick={() => selectAction('insert-before')}
               aria-label="Insert letter before"
+              onDoubleClick={(e) => e.preventDefault()}
             >
               <BsArrowLeft
                 className={`h-6 w-6 ${
@@ -417,6 +418,7 @@ function Home() {
               }`}
               onClick={() => selectAction('swap')}
               aria-label="Swap letter"
+              onDoubleClick={(e) => e.preventDefault()}
             >
               <BsArrowDownUp
                 className={`h-6 w-6 ${
