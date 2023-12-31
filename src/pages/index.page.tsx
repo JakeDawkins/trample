@@ -465,13 +465,6 @@ function Home() {
             ))}
           </ul>
         </div>
-        <button
-          onClick={() => {
-            throw new Error('ohno');
-          }}
-        >
-          error
-        </button>
       </div>
     </>
   );
