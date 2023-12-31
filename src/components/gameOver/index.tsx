@@ -26,11 +26,15 @@ export default function GameOver(props: GameOverProps) {
 
       <div className="flex flex-col border rounded border-green-700 mt-8 overflow-hidden">
         <div className="p-4">
-          <p className="font-bold">Trample #{getDayNumber()}</p>
-          <p className="text-lg mt-2">{`${new Array(props.longestWord)
+          <p className="text-lg font-bold">Trample #{getDayNumber()}</p>
+          <p className="mt-2">
+            {/* {`${new Array(props.longestWord)
             .fill('')
             .map((_, i) => ['🟩', '🟦', '🟪', '🟥', '🟧', '🟨'][i % 6])
-            .join(' ')} Score: ${props.score}`}</p>
+            .join(' ')} Score: ${props.score}`} */}
+            🏆 Score: {props.score}
+          </p>
+          <p className="mt-2">🥇 Longest Word: {props.score}</p>
 
           {props.bestScore ? (
             <p className="text-lg mt-2">
@@ -44,12 +48,9 @@ export default function GameOver(props: GameOverProps) {
               className="bg-green-700 hover:bg-green-800 text-white px-4 py-2 w-full"
               onClick={() => {
                 window.navigator.share({
-                  text: `Trample #${getDayNumber()}\n${new Array(
-                    props.longestWord,
-                  )
-                    .fill('')
-                    .map((_, i) => ['🟩', '🟦', '🟪', '🟥', '🟧', '🟨'][i % 6])
-                    .join('')} Score: ${props.score}`,
+                  text: `Trample #${getDayNumber()}\n🏆 Score: ${
+                    props.score
+                  }\n🥇 Longest Word: ${props.longestWord}\n`,
                 });
               }}
             >
