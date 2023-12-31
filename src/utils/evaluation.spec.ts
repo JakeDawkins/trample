@@ -1,7 +1,7 @@
 import { canMakeWord } from './evaluation';
 
 describe('canMakeWord', () => {
-  it.only('wont let you use a word youve used before', async () => {
+  it('wont let you use a word youve used before', async () => {
     const result = await canMakeWord('at', ['c'], 1, ['CAT', 'ACT']);
     expect(result).toBe(false);
   });
