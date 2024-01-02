@@ -34,7 +34,7 @@ export default function GameOver(props: GameOverProps) {
             .join(' ')} Score: ${props.score}`} */}
             🏆 Score: {props.score}
           </p>
-          <p className="mt-2">🥇 Longest Word: {props.score}</p>
+          <p className="mt-2">🥇 Longest Word: {props.longestWord}</p>
 
           {props.bestScore ? (
             <p className="mt-2">🔥 Your Best Score Ever: {props.bestScore}</p>
