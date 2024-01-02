@@ -7,7 +7,7 @@ interface LayoutProps {
 
 function Layout({ children }: LayoutProps) {
   return (
-    <div className="flex flex-col absolute top-0 bottom-0 right-0 left-0 overflow-y-scroll">
+    <div className="flex flex-col absolute top-0 bottom-0 right-0 left-0 overflow-y-scroll rainbow-box">
       <ErrorBoundary>
         <main className="flex w-full h-full">{children}</main>
       </ErrorBoundary>

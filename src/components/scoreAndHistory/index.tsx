@@ -14,7 +14,7 @@ export default function ScoreAndHistory({
     }
   }, [history]);
   return (
-    <div className="flex flex-col items-center justify-center w-full p-4 bg-black text-white min-h-[85px]">
+    <div className="flex flex-col items-center justify-center w-full p-4 bg-black rainbow-box-sm text-white min-h-[85px]">
       <h2 className="font-bold text-lg">Score: {score}</h2>
       <div className="relative max-h-12 overflow-x-scroll text-center nowrap flex-nowrap">
         {history?.length ? (

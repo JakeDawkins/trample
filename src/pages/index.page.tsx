@@ -366,7 +366,12 @@ function Home() {
           >
             Help
           </button>
-          <h1 className="text-4xl font-bold">Trample</h1>
+          <h1 className="text-4xl font-bold">
+            Trample{' '}
+            <span className="text-rainbow text-base align-text-top -ml-2">
+              #{getDayNumber()}
+            </span>
+          </h1>
           <button
             className={`rounded flex items-center justify-center border border-black px-2`}
             onClick={handleForfeit}

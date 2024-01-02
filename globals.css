@@ -25,3 +25,25 @@ body {
   outline: 2px solid #15803d;
   outline-offset: 4px;
 }
+
+
+@layer components {
+  .rainbow-box {
+    border: 3px solid transparent;
+    border-image: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
+    border-image-slice: 1;
+  }
+  .rainbow-box-sm {
+    /* background-color: #302244; */
+    border: 1px solid transparent;
+    border-image: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
+    border-image-slice: 1;
+  }
+  
+  .text-rainbow {
+    background: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 50%, #fd1892 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  } 
+}
