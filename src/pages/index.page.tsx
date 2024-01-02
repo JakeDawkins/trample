@@ -48,7 +48,7 @@ function Home() {
   const [gameOver, setGameOver] = useState<boolean | undefined>(undefined);
   const [forfeit, setForfeit] = useState(false);
   const longestWord = useMemo(() => {
-    return pastWords.sort((a, b) => b.length - a.length)?.[0]?.length || 0;
+    return [...pastWords].sort((a, b) => b.length - a.length)?.[0]?.length || 0;
   }, [pastWords]);
 
   const resetGame = useCallback(() => {
