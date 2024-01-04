@@ -357,16 +357,16 @@ function Home() {
         </button>
       </Modal>
       <div className="w-full flex flex-col items-center">
-        <header className="flex justify-between w-full mt-4 mb-4 px-4">
+        <header className="flex justify-between w-full mt-4 mb-4 sm:px-2 md:px-4">
           <button
             className={`rounded flex items-center justify-center border border-black px-2`}
             onClick={() => setShowHelpModal(true)}
           >
             Help
           </button>
-          <h1 className="text-4xl font-bold">
+          <h1 className="sm:text-3xl md:text-4xl font-bold">
             Trample{' '}
-            <span className="text-rainbow text-base align-text-top -ml-2">
+            <span className="text-rainbow text-base align-text-top sm:-ml-[6px] md:-ml-2">
               #{getDayNumber()}
             </span>
           </h1>
@@ -473,8 +473,7 @@ function Home() {
             {errorMessage || ''}
           </div>
         )}
-
-        <div className="flex flex-row flex-wrap mt-8 max-w-[300px] -mr-4">
+        <div className="flex flex-row flex-wrap mt-8 max-w-[300px] -mr-8">
           <ul>
             {letterBank.map((letter, idx) => (
               <li key={idx} className="inline-block">
