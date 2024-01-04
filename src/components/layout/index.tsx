@@ -11,6 +11,7 @@ function Layout({ children }: LayoutProps) {
       <ErrorBoundary>
         <main className="flex w-full h-full">{children}</main>
       </ErrorBoundary>
+      <footer className='text-xs text-center'>&copy;{new Date().getFullYear()} Jake Dawkins</footer>
     </div>
   );
 }
