@@ -349,7 +349,7 @@ function Home() {
         </p>
         <button
           className={
-            'bg-green-700 hover:bg-green-800 text-white rounded mt-4 font-bold py-2'
+            'bg-green-600 hover:bg-green-800 text-white rounded mt-4 font-bold py-2'
           }
           onClick={dismissHelpModal}
         >
@@ -398,7 +398,7 @@ function Home() {
             <button
               className={`h-10 w-10 min-w-[40px] mr-4 mb-4 rounded flex items-center justify-center ${
                 selectedAction === 'insert-before'
-                  ? 'bg-green-700'
+                  ? 'bg-green-600'
                   : 'bg-white border border-black'
               }`}
               onClick={() => selectAction('insert-before')}
@@ -416,7 +416,7 @@ function Home() {
             <button
               className={`h-10 w-10 min-w-[40px] mr-4 mb-4 rounded flex items-center justify-center ${
                 selectedAction === 'swap'
-                  ? 'bg-green-700'
+                  ? 'bg-green-600'
                   : 'bg-white border border-black'
               }`}
               onClick={() => selectAction('swap')}
@@ -432,7 +432,7 @@ function Home() {
             <button
               className={`h-10 w-10 min-w-[40px] mr-4 mb-4 rounded flex items-center justify-center ${
                 selectedAction === 'insert-after'
-                  ? 'bg-green-700'
+                  ? 'bg-green-600'
                   : 'bg-white border border-black'
               }`}
               onClick={() => selectAction('insert-after')}
@@ -448,7 +448,7 @@ function Home() {
             </button>
             <button
               className={clsx(
-                `relative h-10 w-10 min-w-[40px] mb-4 rounded bg-red-800 flex items-center justify-center`,
+                `relative h-10 w-10 min-w-[40px] mb-4 rounded bg-red-600 flex items-center justify-center`,
                 deletionsRemaining === 0 && 'bg-gray-400',
               )}
               onClick={() => selectAction('delete')}
@@ -457,9 +457,9 @@ function Home() {
             >
               <div
                 className={clsx(
-                  'w-5 h-5 flex items-center justify-center absolute -top-2 -right-2 rounded-full border border-red-800',
+                  'w-5 h-5 flex items-center justify-center absolute -top-2 -right-2 rounded-full border border-red-600 bg-white',
                   deletionsRemaining === 0
-                    ? 'bg-red-800 text-white font-bold'
+                    ? 'bg-red-600 text-white font-bold'
                     : 'bg-white',
                 )}
               >
