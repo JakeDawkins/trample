@@ -18,7 +18,8 @@ import { endGame, getStats, isGameOver } from '../utils/endGame';
 import GameOver from '../components/gameOver';
 import getDayNumber from '../utils/getDayNumber';
 import getTodaysWord from '../utils/getTodaysWord';
-
+import Head from 'next/head'
+    
 function Home() {
   // use this to track the word that's being played. If the game day is an old
   // one, we'll need to load a new word and reset the game
@@ -319,6 +320,10 @@ function Home() {
   const wordLetters = word.split('');
   return (
     <>
+      <Head>
+        <title>Trample #{getDayNumber()}</title>
+      </Head>
+
       <Modal
         isOpen={showHelpModal}
         handleClose={dismissHelpModal}
