@@ -4,16 +4,14 @@
     "cpus": 4
   },
   "waitFor": "onCreateCommand",
-  "updateContentCommand": "yarn && yarn build",
+  "updateContentCommand": "npm i && npm run build",
   "postCreateCommand": "",
   "postAttachCommand": {
-    "server": "yarn dev"
+    "server": "npm run dev"
   },
   "customizations": {
     "codespaces": {
-      "openFiles": [
-        "src/pages/index.page.tsx"
-      ]
+      "openFiles": ["src/pages/index.page.tsx"]
     }
   },
   "portsAttributes": {
