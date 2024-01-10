@@ -19,13 +19,13 @@ export default function MyApp({ Component, pageProps }) {
         <meta property="og:url" content="https://playtrample.com/" />
         <meta property="og:title" content="Trample" />
         <meta property="og:description" content="A daily word game for you and your friends! No logins, no sign-ups, no ads. How may words can you make?" />
-        {/* <meta property="og:image" content="https://playtrample.com/images/meta-tags.png" /> */}
+        <meta property="og:image" content="https://playtrample.com/trample-og.png" />
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content="https://playtrample.com/" />
         <meta property="twitter:title" content="Trample" />
         <meta property="twitter:description" content="A daily word game for you and your friends! No logins, no sign-ups, no ads. How may words can you make?" />
-        {/* <meta property="twitter:image" content="https://playtrample.com/images/meta-tags.png" /> */}
+        <meta property="twitter:image" content="https://playtrample.com/trample-twitter.png" />
 
       </Head>
       <Layout>
