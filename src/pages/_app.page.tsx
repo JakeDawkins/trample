@@ -7,9 +7,6 @@ import { Layout } from '../components';
 export default function MyApp({ Component, pageProps }) {
   return (
     <>
-    <Head>
-      <title>Trample</title>
-    </Head>
     <Layout>
       <Component {...pageProps} />
     </Layout>
