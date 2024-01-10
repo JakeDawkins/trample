@@ -10,7 +10,7 @@ export default function MyApp({ Component, pageProps }) {
       <Head>
         <title>Trample</title>
         <meta name="title" content="Trample" />
-        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="shortcut icon" href="/static/favicon.ico" />
 
         <meta name="description" content="A daily word game for you and your friends! No logins, no sign-ups, no ads. How may words can you make?" />
 
