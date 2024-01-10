@@ -12,18 +12,21 @@ import {
 import ScoreAndHistory from '../components/scoreAndHistory';
 import LetterButton from '../components/letterButton';
 import clsx from 'clsx';
-import Modal from '../components/modal';
 import { canMakeWord } from '../utils/evaluation';
 import { endGame, getStats, isGameOver } from '../utils/endGame';
 import GameOver from '../components/gameOver';
 import getDayNumber from '../utils/getDayNumber';
 import getTodaysWord from '../utils/getTodaysWord';
 import Head from 'next/head'
+import HelpModal from '../components/helpModal';
+import Button from '../components/button';
+import { useRouter } from 'next/router';
     
 function Home() {
+  const router = useRouter();
   // use this to track the word that's being played. If the game day is an old
   // one, we'll need to load a new word and reset the game
-  const [currentGameDay, setCurrentGameDay] = useState(getDayNumber());
+  const currentGameDay = useMemo(() => getDayNumber(), []);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const todaysLetters = getFullLetterBank();
   const [word, setWord] = useState(getTodaysWord());
@@ -45,7 +48,8 @@ function Home() {
   const [score, setScore] = useState(0);
   const [deletionsRemaining, setDeletionsRemaining] = useState(2);
   const [gameOver, setGameOver] = useState<boolean | undefined>(undefined);
-  const [forfeit, setForfeit] = useState(false);
+  const [forfeit, setForfeit] = useState<boolean>(false);
+  const [possibleWord, setPossibleWord] = useState<undefined | string>()
   const longestWord = useMemo(() => {
     return [...pastWords].sort((a, b) => b.length - a.length)?.[0]?.length || 0;
   }, [pastWords]);
@@ -53,6 +57,14 @@ function Home() {
   const resetGame = useCallback(() => {
     window.location.reload();
   }, []);
+  
+  // if the url param includes ?reset=true, reset the game stats
+  useEffect(() => {
+    if(router.isReady && router?.query?.reset){
+      localStorage.removeItem('trample-stats-2');
+      router.push('/')
+    }
+  }, [router])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -64,6 +76,7 @@ function Home() {
   }, [currentGameDay]);
 
   useEffect(() => {
+    // after initial load, load in the rest of the dictionaries
     if (typeof localStorage !== 'undefined') {
       const helpDismissed = localStorage.getItem('trample-help-dismissed');
       if (!helpDismissed) {
@@ -113,6 +126,7 @@ function Home() {
   );
 
   useEffect(() => {
+    if(selectedAction) setForfeit(false);
     if (selectedAction === 'delete' && selectedWordLetterIdx !== null) {
       const wordLetters = word.split('');
       wordLetters.splice(selectedWordLetterIdx, 1);
@@ -204,7 +218,7 @@ function Home() {
         const valid = words3.has(wordToCheck.toUpperCase());
         if (valid) {
           setWord(wordToCheck);
-          if (selectedLetterBankIdx)
+          if (selectedLetterBankIdx !== null)
             popToLetterBankPosition(selectedLetterBankIdx);
           setScore(score + pointsForWord(wordToCheck));
           setPastWords([...pastWords, wordToCheck]);
@@ -221,7 +235,7 @@ function Home() {
         const valid = words2.has(wordToCheck.toUpperCase());
         if (valid) {
           setWord(wordToCheck);
-          if (selectedLetterBankIdx)
+          if (selectedLetterBankIdx !== null)
             popToLetterBankPosition(selectedLetterBankIdx);
           setScore(score + pointsForWord(wordToCheck));
           setPastWords([...pastWords, wordToCheck]);
@@ -239,7 +253,7 @@ function Home() {
         const valid = words4.has(wordToCheck.toUpperCase());
         if (valid) {
           setWord(wordToCheck);
-          if (selectedLetterBankIdx)
+          if (selectedLetterBankIdx !== null)
             popToLetterBankPosition(selectedLetterBankIdx);
           setScore(score + pointsForWord(wordToCheck));
           setPastWords([...pastWords, wordToCheck]);
@@ -262,6 +276,8 @@ function Home() {
       const valid = dict?.has(wordToCheck.toUpperCase());
       if (valid) {
         setWord(wordToCheck);
+        if (selectedLetterBankIdx !== null)
+          popToLetterBankPosition(selectedLetterBankIdx);
         setScore(score + pointsForWord(wordToCheck));
         setPastWords([...pastWords, wordToCheck]);
         setSelectedLetterBankIdx(null);
@@ -283,8 +299,11 @@ function Home() {
   useEffect(() => {
     // Auto-end game if no more words can be made
     canMakeWord(word, letterBank, deletionsRemaining, pastWords).then(
-      (canMakeWord) => {
-        if (canMakeWord) return;
+      ([canMakeWord, possible]) => {
+        if (canMakeWord){
+          setPossibleWord(possible)
+          return;
+        }
         setGameOver(true);
         // save score
         endGame({ score, longestWord });
@@ -296,6 +315,7 @@ function Home() {
   }, [word, letterBank, isGameOver, pastWords, deletionsRemaining, score]);
 
   const handleForfeit = useCallback(() => {
+    if(score === 0) return
     setGameOver(true);
     setForfeit(true);
     endGame({ score, longestWord });
@@ -313,6 +333,7 @@ function Home() {
         numWords={endGameStats?.numWords}
         longestWord={endGameStats?.longestWord}
         forfeit={forfeit}
+        possibleWord={possibleWord}
       />
     );
   }
@@ -324,51 +345,10 @@ function Home() {
         <title>Trample #{getDayNumber()}</title>
       </Head>
 
-      <Modal
-        isOpen={showHelpModal}
-        handleClose={dismissHelpModal}
-        title="How to play"
-        description="A brief intro to trample"
-      >
-        <p className="text-lg font-bold">The Rules</p>
-        <ol className="list-decimal list-inside">
-          <li>The word at the top is your "active" word</li>
-          <li>
-            Each turn, you pick one letter from the "active" word and replace it
-            with a letter from the letter bank, insert a letter before or after
-            it, or delete it.
-          </li>
-          <li>You can only delete 2 letters per game</li>
-          <li>You only get to take one action per turn</li>
-          <li>Every turn must result in a new valid word</li>
-          <li>
-            You can only reuse a previous word if you make it by deleting a
-            letter
-          </li>
-          <li>The game ends when you can't make any new words</li>
-        </ol>
-
-        <p>
-          There is one starting word and one letter bank per day, so make it
-          count!
-        </p>
-        <button
-          className={
-            'bg-green-600 hover:bg-green-800 text-white rounded mt-4 font-bold py-2'
-          }
-          onClick={dismissHelpModal}
-        >
-          Let's play!
-        </button>
-      </Modal>
+      <HelpModal isOpen={showHelpModal} handleClose={dismissHelpModal}/>
       <div className="w-full flex flex-col items-center">
         <header className="flex justify-between w-full mt-4 mb-4 sm:px-2 md:px-4">
-          <button
-            className={`rounded flex items-center justify-center border border-black px-2`}
-            onClick={() => setShowHelpModal(true)}
-          >
-            Help
-          </button>
+          <Button onClick={() => setShowHelpModal(true)}>Help</Button>
           <h1 className="sm:text-3xl md:text-4xl font-bold">
             Trample{' '}
             <span className="text-rainbow text-base align-text-top sm:-ml-[6px] md:-ml-2">
@@ -376,16 +356,18 @@ function Home() {
             </span>
           </h1>
           <button
-            className={`rounded flex items-center justify-center border border-black px-2`}
+            className={clsx(`rounded flex items-center justify-center border border-black px-2`, score === 0 && 'border-gray-400 text-gray-400 cursor-not-allowed')}
             onClick={handleForfeit}
+            disabled={score === 0}
           >
             Forfeit
           </button>
         </header>
         <ScoreAndHistory score={score} history={pastWords} />
 
-        <div className="mt-8">
-          <ul className="block">
+        {/* active word */}
+        <div className="mt-8 sm:p-2 md:p-4 sm:pt-0 md:pt-0">
+          <ul className="block mt-2">
             {wordLetters.map((letter, idx) => (
               <li key={idx} className="inline-block">
                 <LetterButton
@@ -451,7 +433,8 @@ function Home() {
                 }`}
               />
             </button>
-            <button
+            
+            {deletionsRemaining ? <button
               className={clsx(
                 `relative h-10 w-10 min-w-[40px] mb-4 rounded bg-red-600 flex items-center justify-center`,
                 deletionsRemaining === 0 && 'bg-gray-400',
@@ -471,7 +454,7 @@ function Home() {
                 {deletionsRemaining}
               </div>
               <BsTrash3 className="fill-white h-6 w-6" />
-            </button>
+            </button>: null}
           </div>
         ) : (
           <div className="h-10 mt-4 mb-4 text-red-800 font-bold">

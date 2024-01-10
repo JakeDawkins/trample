@@ -93,7 +93,7 @@ const weights = [
   5, // V
   10, // W
   1, // X
-  7, // Y
+  6, // Y
   1, // Z
 ];
 const totalWeight = weights.reduce((acc, weight) => acc + weight, 0);
@@ -169,6 +169,16 @@ export default function getFullLetterBank(seedOverride?: string): string[] {
   return letterBank.filter(isDefined);
 }
 
+const wordLengthMultiplier: Record<number, number> = {
+  [4]: 1.1,
+  [5]: 1.2,
+  [6]: 1.3, 
+  [7]: 1.4,
+  [8]: 1.5,
+}
+
 export function pointsForWord(word: string): number {
-  return word.split('').reduce((acc, letter) => acc + points[letter], 0);
+  const basePts = word.split('').reduce((acc, letter) => acc + points[letter], 0);
+  if(wordLengthMultiplier[word.length]) return Math.ceil(basePts * wordLengthMultiplier[word.length])
+  return basePts
 }

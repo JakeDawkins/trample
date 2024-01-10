@@ -15,7 +15,7 @@ export async function canMakeWord(
   letterBank: string[],
   deletionsRemaining: number,
   previousWords: string[] = [],
-): Promise<boolean> {
+): Promise<[boolean, string | undefined]> {
   // Can you make another word by deleting a letter from the word?
   if (word.length > 2 && deletionsRemaining > 0) {
     const dict = await import(`./dicts/${word.length - 1}`);
@@ -24,7 +24,7 @@ export async function canMakeWord(
       newWordLetters.splice(i, 1);
       const newWordString = newWordLetters.join('').toUpperCase();
       if (previousWords.includes(newWordString)) continue;
-      if (dict.words.has(newWordString)) return true;
+      if (dict.words.has(newWordString)) return [true, newWordString];
     }
   }
 
@@ -41,7 +41,7 @@ export async function canMakeWord(
       const newWordString = newWordLetters.join('').toUpperCase();
       if (dict.words.has(newWordString.toUpperCase())) {
         if (previousWords.includes(newWordString)) continue;
-        else return true;
+        else return [true, newWordString];
       }
     }
   }
@@ -54,10 +54,10 @@ export async function canMakeWord(
       const newWordString = newWordLetters.join('').toUpperCase();
       if (dictPlusOne.words.has(newWordString)) {
         if (previousWords.includes(newWordString)) continue;
-        else return true;
+        else return [true, newWordString];
       }
     }
   }
 
-  return false;
+  return [false, undefined];
 }

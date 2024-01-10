@@ -4,9 +4,11 @@ import { useEffect, useRef } from 'react';
 export default function ScoreAndHistory({
   score,
   history,
+  bonusPct,
 }: {
   score: number;
   history?: string[];
+  bonusPct?: number;
 }) {
   const lastRef = useRef<HTMLLIElement>(null);
   useEffect(() => {
@@ -15,12 +17,12 @@ export default function ScoreAndHistory({
     }
   }, [history]);
   return (
-    <div className={clsx("w-full sm:p-2 md:p-4 sm:pt-0 md:pt-0 text-white min-h-[85px]")}>
+    <div className={clsx("w-full text-white min-h-[85px]", "sm:p-2 md:p-4 sm:pt-0 md:pt-0")}>
       <div className={clsx(
         "flex flex-col items-center justify-center border border-black bg-black rounded",
       )}>
         <h2 className="font-bold text-lg">Score: {score}</h2>
-        <div className="relative max-h-12 overflow-x-scroll text-center nowrap flex-nowrap">
+        <div className="relative max-h-12 text-center nowrap flex-nowrap">
           {history?.length ? (
             <ol className="nowrap" aria-label="previous words">
               {history.map((word, idx) => (
