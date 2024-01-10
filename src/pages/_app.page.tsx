@@ -12,19 +12,19 @@ export default function MyApp({ Component, pageProps }) {
         <meta name="title" content="Trample" />
         <link rel="shortcut icon" href="/static/favicon.ico" />
 
-        <meta name="description" content="A daily word game for you and your friends! No logins, no sign-ups, no ads. How may words can you make?" />
+        <meta name="description" content="How many words can you make before you get trampled? A daily word game. No logins, no sign-ups, no ads." />
 
         {/* OG/facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://playtrample.com/" />
         <meta property="og:title" content="Trample" />
-        <meta property="og:description" content="A daily word game for you and your friends! No logins, no sign-ups, no ads. How may words can you make?" />
+        <meta property="og:description" content="How many words can you make before you get trampled? A daily word game. No logins, no sign-ups, no ads." />
         <meta property="og:image" content="https://playtrample.com/trample-og.png" />
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content="https://playtrample.com/" />
         <meta property="twitter:title" content="Trample" />
-        <meta property="twitter:description" content="A daily word game for you and your friends! No logins, no sign-ups, no ads. How may words can you make?" />
+        <meta property="twitter:description" content="How many words can you make before you get trampled? A daily word game. No logins, no sign-ups, no ads." />
         <meta property="twitter:image" content="https://playtrample.com/trample-twitter.png" />
 
       </Head>
