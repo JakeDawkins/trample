@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { words as words2 } from '../utils/dicts/2';
-import { words as words3 } from '../utils/dicts/3';
-import { words as words4 } from '../utils/dicts/4';
+import dicts from '../utils/dicts';
+
 import getFullLetterBank, { pointsForWord } from '../utils/getFullLetterBank';
 import {
   BsArrowDownUp,
@@ -198,6 +197,15 @@ function Home() {
 
   const checkWord = useCallback(
     async (wordToCheck: string, allowPreviousWords?: boolean) => {
+      const applyValidWord = () => {
+        setWord(wordToCheck);
+        if (selectedLetterBankIdx !== null)
+          popToLetterBankPosition(selectedLetterBankIdx);
+        setScore(score + pointsForWord(wordToCheck));
+        setPastWords([...pastWords, wordToCheck]);
+        setSelectedLetterBankIdx(null);
+      }
+
       setErrorMessage(undefined);
 
       if (wordToCheck.length < 2 || wordToCheck.length > 15) {
@@ -214,32 +222,11 @@ function Home() {
 
       // these shorter words for the initial set of letters 2/3/4, we preload the
       // dicts to make checking instant
-      if (wordToCheck.length === 3) {
-        const valid = words3.has(wordToCheck.toUpperCase());
+      if (wordToCheck.length === 2 || wordToCheck.length === 3) {
+        const dict = wordToCheck.length === 2 ? dicts[2] : dicts[3];
+        const valid = dict.has(wordToCheck.toUpperCase());
         if (valid) {
-          setWord(wordToCheck);
-          if (selectedLetterBankIdx !== null)
-            popToLetterBankPosition(selectedLetterBankIdx);
-          setScore(score + pointsForWord(wordToCheck));
-          setPastWords([...pastWords, wordToCheck]);
-          setSelectedLetterBankIdx(null);
-          return true;
-        } else {
-          setErrorMessage(`"${wordToCheck}" is not a word!`);
-          setSelectedLetterBankIdx(null);
-          return false;
-        }
-      }
-      if (wordToCheck.length === 2) {
-        // don't need to preload the dict for len === 1 since that's an invalid len
-        const valid = words2.has(wordToCheck.toUpperCase());
-        if (valid) {
-          setWord(wordToCheck);
-          if (selectedLetterBankIdx !== null)
-            popToLetterBankPosition(selectedLetterBankIdx);
-          setScore(score + pointsForWord(wordToCheck));
-          setPastWords([...pastWords, wordToCheck]);
-          setSelectedLetterBankIdx(null);
+          applyValidWord();
           return true;
         } else {
           setErrorMessage(`"${wordToCheck}" is not a word!`);
@@ -249,15 +236,10 @@ function Home() {
       }
       if (wordToCheck.length === 4) {
         // use the preloaded 4-letter dict, but kick off preload for larger dict
-        const _wordsPlus = import(`../utils/dicts/${wordToCheck.length + 1}`);
-        const valid = words4.has(wordToCheck.toUpperCase());
+        // const _wordsPlus = import(`../utils/dicts/${wordToCheck.length + 1}`);
+        const valid = dicts[4].has(wordToCheck.toUpperCase());
         if (valid) {
-          setWord(wordToCheck);
-          if (selectedLetterBankIdx !== null)
-            popToLetterBankPosition(selectedLetterBankIdx);
-          setScore(score + pointsForWord(wordToCheck));
-          setPastWords([...pastWords, wordToCheck]);
-          setSelectedLetterBankIdx(null);
+          applyValidWord();
           return true;
         } else {
           setErrorMessage(`"${wordToCheck}" is not a word!`);
@@ -267,20 +249,15 @@ function Home() {
       }
 
       // just used for preloading, not for checking
-      const _wordsMinus = import(`../utils/dicts/${wordToCheck.length - 1}`);
-      const _wordsPlus = import(`../utils/dicts/${wordToCheck.length + 1}`);
-      const dict: Set<string> | undefined = (
-        await import(`../utils/dicts/${wordToCheck.length}`)
-      )?.words;
+      // const _wordsMinus = import(`../utils/dicts/${wordToCheck.length - 1}`);
+      // const _wordsPlus = import(`../utils/dicts/${wordToCheck.length + 1}`);
+      // const dict: Set<string> | undefined = (
+      //   await import(`../utils/dicts/${wordToCheck.length}`)
+      // )?.words;
 
-      const valid = dict?.has(wordToCheck.toUpperCase());
+      const valid = dicts[wordToCheck.length]?.has(wordToCheck.toUpperCase());
       if (valid) {
-        setWord(wordToCheck);
-        if (selectedLetterBankIdx !== null)
-          popToLetterBankPosition(selectedLetterBankIdx);
-        setScore(score + pointsForWord(wordToCheck));
-        setPastWords([...pastWords, wordToCheck]);
-        setSelectedLetterBankIdx(null);
+        applyValidWord();
         return true;
       } else {
         setErrorMessage(`"${wordToCheck}" is not a word!`);
