@@ -1,7 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { words as words2 } from '../utils/dicts/2';
-import { words as words3 } from '../utils/dicts/3';
-import { words as words4 } from '../utils/dicts/4';
 import getFullLetterBank, { pointsForWord } from '../utils/getFullLetterBank';
 import {
   BsArrowDownUp,
@@ -22,7 +19,30 @@ import HelpModal from '../components/helpModal';
 import Button from '../components/button';
 import { useRouter } from 'next/router';
 import * as Sentry from '@sentry/nextjs';
-    
+  
+const GAME_STATE_KEY = 'trample-game-state'
+function saveGameState({pastWords, score, word}: {pastWords: string[], score: number, word: string}){
+  const day = getDayNumber()
+  localStorage.setItem(GAME_STATE_KEY, JSON.stringify({
+    day,
+    pastWords, 
+    score,
+    word,
+  }))
+
+}
+
+function loadGameState(){
+  const savedState = localStorage.getItem(GAME_STATE_KEY);
+  const parsed = savedState ? JSON.parse(savedState): undefined;
+  if(!parsed) return;
+  if(parsed?.day !== getDayNumber()) {
+    localStorage.removeItem(GAME_STATE_KEY)
+    return;
+  }
+  return parsed
+}
+
 function Home() {
   const router = useRouter();
   // use this to track the word that's being played. If the game day is an old
@@ -77,10 +97,32 @@ function Home() {
   }, [currentGameDay]);
 
   useEffect(() => {
-    // make sure the +1/-1 dicts are preloaded
+    // make sure the +1/+0 (initial)/-1 dicts are preloaded
     import(`../utils/dicts/${word.length + 1}`);
+    import(`../utils/dicts/${word.length}`);
     import(`../utils/dicts/${word.length - 1}`);
   }, [word])
+
+  // save game state in case of reloads
+  useEffect(() => {
+    if(pastWords.length > 1) {
+      saveGameState({
+        word,
+        score,
+        pastWords,
+      })
+    }
+  }, [word, score, pastWords])
+
+  // load game state if present
+  useEffect(() => {
+    const savedState = loadGameState();
+    if(savedState){
+      setWord(savedState.word)
+      setPastWords(savedState.pastWords)
+      setScore(savedState.score)
+    }
+  }, [])
 
   useEffect(() => {
     // after initial load, load in the rest of the dictionaries
