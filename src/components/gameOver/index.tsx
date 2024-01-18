@@ -42,7 +42,7 @@ export default function GameOver(props: GameOverProps) {
                 window.navigator.share({
                   text: `Trample #${getDayNumber()}\n🏆 Score: ${
                     props.score
-                  }\n🥇 Longest Word: ${props.longestWord}\n`,
+                  }\n🥇 Longest Word: ${props.longestWord}`,
                 });
               }}
             >
