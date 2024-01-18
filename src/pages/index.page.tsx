@@ -19,6 +19,7 @@ import HelpModal from '../components/helpModal';
 import Button from '../components/button';
 import { useRouter } from 'next/router';
 import * as Sentry from '@sentry/nextjs';
+import mixpanel from 'mixpanel-browser'
   
 const GAME_STATE_KEY = 'trample-game-state'
 function saveGameState({pastWords, score, word}: {pastWords: string[], score: number, word: string}){
@@ -344,6 +345,7 @@ function Home() {
 
   const handleForfeit = useCallback(() => {
     if(score === 0) return
+    mixpanel.track("FORFEIT")
     setGameOver(true);
     setForfeit(true);
     endGame({ score, longestWord });
