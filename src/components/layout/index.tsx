@@ -15,7 +15,6 @@ function Layout({ children }: LayoutProps) {
       mixpanel.init(
         token, 
         {
-          debug: true, 
           track_pageview: true, 
           persistence: 'localStorage'
         }
