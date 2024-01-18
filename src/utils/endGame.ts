@@ -11,12 +11,14 @@ interface Stats {
 interface endGameOpts {
   score: number;
   longestWord?: number;
+  pastWords?: string[];
 }
 
 // Save stats about today's game
 export function endGame({
   score,
   longestWord,
+  pastWords
 }: endGameOpts): Stats | undefined {
   if (typeof localStorage === 'undefined') return;
 
@@ -42,7 +44,7 @@ export function endGame({
       : score,
   };
 
-  mixpanel.track('FINISH_GAME', newStats)
+  mixpanel.track('FINISH_GAME', {...newStats, pastWords})
   localStorage.setItem('trample-stats-2', JSON.stringify(newStats));
 
   return getStats();

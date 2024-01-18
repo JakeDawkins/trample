@@ -251,6 +251,7 @@ function Home() {
       const dict: Set<string> | undefined = (
         await import(`../utils/dicts/${wordToCheck.length}`)
       )?.words;
+      mixpanel.track("CHECK_WORD_START", {wordToCheck, pastWords})
       if(!dict) {
         Sentry.captureException("dict loading failed")
         alert('An error occurred when loading the dictionary. Please reload the page.')
@@ -258,12 +259,19 @@ function Home() {
       }
 
       const applyValidWord = () => {
+        mixpanel.track("CHECK_WORD_VALID", {wordToCheck, pastWords})
         setWord(wordToCheck);
         if (selectedLetterBankIdx !== null)
           popToLetterBankPosition(selectedLetterBankIdx);
         setScore(score + pointsForWord(wordToCheck));
         setPastWords([...pastWords, wordToCheck]);
         setSelectedLetterBankIdx(null);
+      }
+
+      const handleInvalidWord = () => {
+        setErrorMessage(`"${wordToCheck}" is not a word!`);
+        setSelectedLetterBankIdx(null);
+        return false;
       }
 
       setErrorMessage(undefined);
@@ -280,41 +288,12 @@ function Home() {
         return false;
       }
 
-      // these shorter words for the initial set of letters 2/3/4, we preload the
-      // dicts to make checking instant
-      if (wordToCheck.length === 2 || wordToCheck.length === 3) {
-        const valid = dict.has(wordToCheck.toUpperCase());
-        if (valid) {
-          applyValidWord();
-          return true;
-        } else {
-          setErrorMessage(`"${wordToCheck}" is not a word!`);
-          setSelectedLetterBankIdx(null);
-          return false;
-        }
-      }
-      if (wordToCheck.length === 4) {
-        // use the preloaded 4-letter dict, but kick off preload for larger dict
-        // const _wordsPlus = import(`../utils/dicts/${wordToCheck.length + 1}`);
-        const valid = dict.has(wordToCheck.toUpperCase());
-        if (valid) {
-          applyValidWord();
-          return true;
-        } else {
-          setErrorMessage(`"${wordToCheck}" is not a word!`);
-          setSelectedLetterBankIdx(null);
-          return false;
-        }
-      }
-
       const valid = dict.has(wordToCheck.toUpperCase());
       if (valid) {
         applyValidWord();
         return true;
       } else {
-        setErrorMessage(`"${wordToCheck}" is not a word!`);
-        setSelectedLetterBankIdx(null);
-        return false;
+        return handleInvalidWord()
       }
     },
     [allFutureLetters, score, selectedLetterBankIdx],
@@ -335,7 +314,7 @@ function Home() {
         }
         setGameOver(true);
         // save score
-        endGame({ score, longestWord });
+        endGame({ score, longestWord, pastWords });
       },
     );
 
@@ -345,10 +324,10 @@ function Home() {
 
   const handleForfeit = useCallback(() => {
     if(score === 0) return
-    mixpanel.track("FORFEIT")
+    mixpanel.track("FORFEIT", {pastWords})
     setGameOver(true);
     setForfeit(true);
-    endGame({ score, longestWord });
+    endGame({ score, longestWord, pastWords });
   }, [score, longestWord]);
 
   if (typeof gameOver === 'undefined') {
