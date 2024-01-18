@@ -22,7 +22,7 @@ export default function ScoreAndHistory({
         "flex flex-col items-center justify-center border border-black bg-black rounded",
       )}>
         <h2 className="font-bold text-lg">Score: {score}</h2>
-        <div className="relative overflow-x-scroll max-h-12 text-center nowrap flex-nowrap">
+        <div className="relative overflow-auto max-h-12 text-center nowrap flex-nowrap">
           {history?.length ? (
             <ol className="nowrap" aria-label="previous words">
               {history.map((word, idx) => (

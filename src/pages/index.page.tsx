@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import dicts from '../utils/dicts';
-
+import { words as words2 } from '../utils/dicts/2';
+import { words as words3 } from '../utils/dicts/3';
+import { words as words4 } from '../utils/dicts/4';
 import getFullLetterBank, { pointsForWord } from '../utils/getFullLetterBank';
 import {
   BsArrowDownUp,
@@ -20,6 +21,7 @@ import Head from 'next/head'
 import HelpModal from '../components/helpModal';
 import Button from '../components/button';
 import { useRouter } from 'next/router';
+import * as Sentry from '@sentry/nextjs';
     
 function Home() {
   const router = useRouter();
@@ -73,6 +75,12 @@ function Home() {
     }, 5000);
     return () => clearInterval(interval);
   }, [currentGameDay]);
+
+  useEffect(() => {
+    // make sure the +1/-1 dicts are preloaded
+    import(`../utils/dicts/${word.length + 1}`);
+    import(`../utils/dicts/${word.length - 1}`);
+  }, [word])
 
   useEffect(() => {
     // after initial load, load in the rest of the dictionaries
@@ -197,6 +205,15 @@ function Home() {
 
   const checkWord = useCallback(
     async (wordToCheck: string, allowPreviousWords?: boolean) => {
+      const dict: Set<string> | undefined = (
+        await import(`../utils/dicts/${wordToCheck.length}`)
+      )?.words;
+      if(!dict) {
+        Sentry.captureException("dict loading failed")
+        alert('An error occurred when loading the dictionary. Please reload the page.')
+        return;
+      }
+
       const applyValidWord = () => {
         setWord(wordToCheck);
         if (selectedLetterBankIdx !== null)
@@ -223,7 +240,6 @@ function Home() {
       // these shorter words for the initial set of letters 2/3/4, we preload the
       // dicts to make checking instant
       if (wordToCheck.length === 2 || wordToCheck.length === 3) {
-        const dict = wordToCheck.length === 2 ? dicts[2] : dicts[3];
         const valid = dict.has(wordToCheck.toUpperCase());
         if (valid) {
           applyValidWord();
@@ -237,7 +253,7 @@ function Home() {
       if (wordToCheck.length === 4) {
         // use the preloaded 4-letter dict, but kick off preload for larger dict
         // const _wordsPlus = import(`../utils/dicts/${wordToCheck.length + 1}`);
-        const valid = dicts[4].has(wordToCheck.toUpperCase());
+        const valid = dict.has(wordToCheck.toUpperCase());
         if (valid) {
           applyValidWord();
           return true;
@@ -248,14 +264,7 @@ function Home() {
         }
       }
 
-      // just used for preloading, not for checking
-      // const _wordsMinus = import(`../utils/dicts/${wordToCheck.length - 1}`);
-      // const _wordsPlus = import(`../utils/dicts/${wordToCheck.length + 1}`);
-      // const dict: Set<string> | undefined = (
-      //   await import(`../utils/dicts/${wordToCheck.length}`)
-      // )?.words;
-
-      const valid = dicts[wordToCheck.length]?.has(wordToCheck.toUpperCase());
+      const valid = dict.has(wordToCheck.toUpperCase());
       if (valid) {
         applyValidWord();
         return true;
