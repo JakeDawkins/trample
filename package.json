@@ -22,6 +22,7 @@
     "@vercel/analytics": "^1.1.1",
     "clsx": "^2.1.0",
     "graphql": "^16.6.0",
+    "mixpanel-browser": "^2.48.1",
     "next": "latest",
     "preact": "^10.19.2",
     "react": "^18.2",

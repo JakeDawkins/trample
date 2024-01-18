@@ -1,5 +1,5 @@
 import getDayNumber from './getDayNumber';
-
+import mixpanel from 'mixpanel-browser'
 interface Stats {
   dayNumber?: number;
   score?: number;
@@ -42,6 +42,7 @@ export function endGame({
       : score,
   };
 
+  mixpanel.track('FINISH_GAME', newStats)
   localStorage.setItem('trample-stats-2', JSON.stringify(newStats));
 
   return getStats();
