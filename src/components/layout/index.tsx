@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import ErrorBoundary from '../errorBoundary';
 import { Analytics } from '@vercel/analytics/react';
 import mixpanel from 'mixpanel-browser';
-
+import Link from 'next/link';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -11,16 +11,13 @@ interface LayoutProps {
 function Layout({ children }: LayoutProps) {
   useEffect(() => {
     const token = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN;
-    if(token){
-      mixpanel.init(
-        token, 
-        {
-          track_pageview: true, 
-          persistence: 'localStorage'
-        }
-      );
+    if (token) {
+      mixpanel.init(token, {
+        track_pageview: true,
+        persistence: 'localStorage',
+      });
     }
-  }, [])
+  }, []);
 
   return (
     <>
@@ -28,7 +25,16 @@ function Layout({ children }: LayoutProps) {
         <ErrorBoundary>
           <main className="flex w-full h-full">{children}</main>
         </ErrorBoundary>
-        <footer className='text-xs text-center'>&copy;{new Date().getFullYear()} Jake Dawkins</footer>
+        <footer className="text-xs text-center">
+          &copy;{new Date().getFullYear()} Jake Dawkins
+          <Link
+            className="underline text-green-600 hover:text-green-800 inline ml-2"
+            href="https://forms.gle/PRm4g235UKTbevn39"
+            target="_blank"
+          >
+            Report an issue
+          </Link>
+        </footer>
       </div>
       <Analytics />
     </>
