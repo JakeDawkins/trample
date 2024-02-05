@@ -20,29 +20,7 @@ import Button from '../components/button';
 import { useRouter } from 'next/router';
 import * as Sentry from '@sentry/nextjs';
 import mixpanel from 'mixpanel-browser'
-  
-const GAME_STATE_KEY = 'trample-game-state'
-function saveGameState({pastWords, score, word}: {pastWords: string[], score: number, word: string}){
-  const day = getDayNumber()
-  localStorage.setItem(GAME_STATE_KEY, JSON.stringify({
-    day,
-    pastWords, 
-    score,
-    word,
-  }))
-
-}
-
-function loadGameState(){
-  const savedState = localStorage.getItem(GAME_STATE_KEY);
-  const parsed = savedState ? JSON.parse(savedState): undefined;
-  if(!parsed) return;
-  if(parsed?.day !== getDayNumber()) {
-    localStorage.removeItem(GAME_STATE_KEY)
-    return;
-  }
-  return parsed
-}
+import { loadGameState, saveGameState } from '../utils/localStorage';
 
 function Home() {
   const router = useRouter();
@@ -111,9 +89,10 @@ function Home() {
         word,
         score,
         pastWords,
+        deletionsRemaining
       })
     }
-  }, [word, score, pastWords])
+  }, [word, score, pastWords, deletionsRemaining])
 
   // load game state if present
   useEffect(() => {
@@ -122,6 +101,7 @@ function Home() {
       setWord(savedState.word)
       setPastWords(savedState.pastWords)
       setScore(savedState.score)
+      setDeletionsRemaining(savedState.deletionsRemaining)
     }
   }, [])
 
