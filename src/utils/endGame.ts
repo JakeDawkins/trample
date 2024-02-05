@@ -1,5 +1,6 @@
+import { STATS_KEY } from './constants';
 import getDayNumber from './getDayNumber';
-import mixpanel from 'mixpanel-browser'
+import mixpanel from 'mixpanel-browser';
 interface Stats {
   dayNumber?: number;
   score?: number;
@@ -18,11 +19,11 @@ interface endGameOpts {
 export function endGame({
   score,
   longestWord,
-  pastWords
+  pastWords,
 }: endGameOpts): Stats | undefined {
   if (typeof localStorage === 'undefined') return;
 
-  const savedStats = localStorage.getItem('trample-stats');
+  const savedStats = localStorage.getItem(STATS_KEY);
   const stats: Stats = savedStats ? JSON.parse(savedStats) : {};
 
   const { dayNumber: savedDayNumber } = stats;
@@ -44,21 +45,21 @@ export function endGame({
       : score,
   };
 
-  mixpanel.track('FINISH_GAME', {...newStats, pastWords})
-  localStorage.setItem('trample-stats-2', JSON.stringify(newStats));
+  mixpanel.track('FINISH_GAME', { ...newStats, pastWords });
+  localStorage.setItem(STATS_KEY, JSON.stringify(newStats));
 
   return getStats();
 }
 
 export function getStats(): Stats | undefined {
   if (typeof localStorage === 'undefined') return;
-  const savedStats = localStorage.getItem('trample-stats-2');
+  const savedStats = localStorage.getItem(STATS_KEY);
   const stats = savedStats ? JSON.parse(savedStats) : {};
   return stats as Stats;
 }
 
 export function isGameOver(): boolean {
-  const savedStats = localStorage.getItem('trample-stats-2');
+  const savedStats = localStorage.getItem(STATS_KEY);
   const stats = savedStats ? JSON.parse(savedStats) : {};
   const { dayNumber: savedDayNumber } = stats;
   const dayNumber = getDayNumber();

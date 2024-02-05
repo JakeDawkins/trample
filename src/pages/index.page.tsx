@@ -22,6 +22,7 @@ import * as Sentry from '@sentry/nextjs';
 import mixpanel from 'mixpanel-browser';
 import { loadGameState, saveGameState } from '../utils/localStorage';
 import ActionButton, { Action } from '../components/ActionButton';
+import { STATS_KEY } from '../utils/constants';
 
 function Home() {
   const router = useRouter();
@@ -62,7 +63,7 @@ function Home() {
   // if the url param includes ?reset=true, reset the game stats
   useEffect(() => {
     if (router.isReady && router?.query?.reset) {
-      localStorage.removeItem('trample-stats-2');
+      localStorage.removeItem(STATS_KEY);
       router.push('/');
     }
   }, [router]);
