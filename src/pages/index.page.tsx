@@ -22,7 +22,7 @@ import * as Sentry from '@sentry/nextjs';
 import mixpanel from 'mixpanel-browser';
 import { loadGameState, saveGameState } from '../utils/localStorage';
 import ActionButton, { Action } from '../components/ActionButton';
-import { STATS_KEY } from '../utils/constants';
+import { HELP_DISMISSED_KEY, STATS_KEY } from '../utils/constants';
 
 function Home() {
   const router = useRouter();
@@ -110,7 +110,7 @@ function Home() {
   useEffect(() => {
     // after initial load, load in the rest of the dictionaries
     if (typeof localStorage !== 'undefined') {
-      const helpDismissed = localStorage.getItem('trample-help-dismissed');
+      const helpDismissed = localStorage.getItem(HELP_DISMISSED_KEY);
       if (!helpDismissed) {
         setShowHelpModal(true);
       }
@@ -118,7 +118,7 @@ function Home() {
   }, []);
 
   const dismissHelpModal = () => {
-    localStorage.setItem('trample-help-dismissed', 'true');
+    localStorage.setItem(HELP_DISMISSED_KEY, 'true');
     setShowHelpModal(false);
   };
 
