@@ -15,7 +15,7 @@ import GameOver from '../components/gameOver';
 import getDayNumber from '../utils/getDayNumber';
 import getTodaysWord from '../utils/getTodaysWord';
 import Head from 'next/head';
-import HelpModal from '../components/helpModal';
+import GettingStarted from '../components/GettingStarted';
 import Button from '../components/button';
 import { useRouter } from 'next/router';
 import * as Sentry from '@sentry/nextjs';
@@ -338,7 +338,7 @@ function Home() {
         <title>Trample #{getDayNumber()}</title>
       </Head>
 
-      <HelpModal isOpen={showHelpModal} handleClose={dismissHelpModal} />
+      <GettingStarted isOpen={showHelpModal} handleClose={dismissHelpModal} />
       <div className="w-full flex flex-col items-center">
         <header className="flex justify-between w-full mt-4 mb-4 sm:px-2 md:px-4">
           <Button onClick={() => setShowHelpModal(true)}>Help</Button>
