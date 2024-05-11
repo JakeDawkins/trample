@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { BsArrowRight } from 'react-icons/bs';
+import { BsArrowRight, BsTrash3 } from 'react-icons/bs';
 import LetterButton from '../letterButton';
 import ActionButton, { Action } from '../ActionButton';
 
@@ -39,6 +39,23 @@ export default function Intro({ onNext }: { onNext: () => void }) {
               );
             },
           )}
+          <button
+            className={clsx(
+              `relative h-10 w-10 min-w-[40px] mb-4 rounded bg-red-600 flex items-center justify-center`,
+            )}
+            onClick={() => {}}
+            aria-label={`Delete selected letter. 2 deletions remaining.`}
+          >
+            <div
+              className={clsx(
+                'w-5 h-5 flex items-center justify-center absolute -top-2 -right-2 rounded-full border  border-red-600 bg-white',
+                'bg-white',
+              )}
+            >
+              {2}
+            </div>
+            <BsTrash3 className="fill-white h-6 w-6" />
+          </button>
         </div>
         <div className="flex w-full justify-center">
           <div className="flex flex-row flex-wrap mt-4 max-w-[300px] -mr-4">

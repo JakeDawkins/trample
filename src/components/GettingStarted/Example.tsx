@@ -5,6 +5,7 @@ import {
   Bs3Circle,
   BsArrowRight,
   BsCheckCircle,
+  BsTrash3,
 } from 'react-icons/bs';
 import LetterButton from '../letterButton';
 import { useState } from 'react';
@@ -109,6 +110,23 @@ export default function Example({ onNext }: { onNext: () => void }) {
             );
           },
         )}
+        <button
+          className={clsx(
+            `relative h-10 w-10 min-w-[40px] mb-4 rounded bg-red-600 flex items-center justify-center mr-4`,
+          )}
+          onClick={() => {}}
+          aria-label={`Delete selected letter. 2 deletions remaining.`}
+        >
+          <div
+            className={clsx(
+              'w-5 h-5 flex items-center justify-center absolute -top-2 -right-2 rounded-full border  border-red-600 bg-white',
+              'bg-white',
+            )}
+          >
+            {2}
+          </div>
+          <BsTrash3 className="fill-white h-6 w-6" />
+        </button>
       </div>
 
       <div className="flex items-center mt-4 ">
