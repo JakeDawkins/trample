@@ -350,7 +350,7 @@ function Home() {
           </h1>
           <button
             className={clsx(
-              `rounded flex items-center justify-center border border-black px-2`,
+              `rounded flex items-center justify-center border border-r-2 border-b-2 border-black px-2`,
               score === 0 && 'border-gray-400 text-gray-400 cursor-not-allowed',
             )}
             onClick={handleForfeit}

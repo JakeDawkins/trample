@@ -17,10 +17,17 @@ export default function ScoreAndHistory({
     }
   }, [history]);
   return (
-    <div className={clsx("w-full text-white min-h-[85px]", "sm:p-2 md:p-4 sm:pt-0 md:pt-0")}>
-      <div className={clsx(
-        "flex flex-col items-center justify-center border border-black bg-black rounded",
-      )}>
+    <div
+      className={clsx(
+        'w-full text-white min-h-[85px]',
+        'sm:p-2 md:p-4 sm:pt-0 md:pt-0',
+      )}
+    >
+      <div
+        className={clsx(
+          'flex flex-col items-center justify-center border border-black bg-black rounded',
+        )}
+      >
         <h2 className="font-bold text-lg">Score: {score}</h2>
         <div className="relative overflow-auto max-h-12 text-center nowrap flex-nowrap">
           {history?.length ? (
@@ -28,7 +35,10 @@ export default function ScoreAndHistory({
               {history.map((word, idx) => (
                 <li
                   key={idx}
-                  className="inline-block mr-2"
+                  className={clsx(
+                    'inline-block',
+                    idx !== history.length - 1 && 'mr-2',
+                  )}
                   ref={idx === history.length - 1 ? lastRef : null}
                 >
                   {word}

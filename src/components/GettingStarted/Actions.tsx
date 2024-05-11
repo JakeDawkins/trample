@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import { BsArrowRight } from 'react-icons/bs';
 import ActionsImg from './assets/actions-annotated.png';
+import ActionButton, { Action } from '../ActionButton';
 
 export default function Actions({ onNext }: { onNext: () => void }) {
   return (
@@ -16,6 +17,7 @@ export default function Actions({ onNext }: { onNext: () => void }) {
         <strong>But be careful!</strong> You can only delete 2 letters per game,
         then that option disappears. Try to only use it when you have to.
       </p>
+
       <Image
         alt="Home screen"
         src={ActionsImg}

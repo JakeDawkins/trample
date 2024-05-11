@@ -37,6 +37,7 @@ export function endGame({
     dayNumber,
     score,
     longestWord,
+    numWords: pastWords?.length,
     // all-time stats
     bestScore: stats.bestScore
       ? score > stats.bestScore

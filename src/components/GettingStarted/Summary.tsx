@@ -20,16 +20,16 @@ export default function Summary({ onNext }: { onNext: () => void }) {
         <li>There's a new game with a new starting word every day!</li>
       </ul>
       <div className="flex-1 flex flex-col mt-4">
-        <div className="flex justify-center items-center p-4 text-center flex-1 bg-blue-300">
+        <div className="flex justify-start items-center p-4 text-center flex-1 bg-blue-300 rounded-t">
           <Bs1Circle className="text-black mr-2 w-6 h-6 flex-shrink-0" />
           Choose a letter from the current word
         </div>
-        <div className="flex justify-center items-center p-4 text-center flex-1 bg-purple-300">
+        <div className="flex justify-start items-center p-4 text-center flex-1 bg-purple-300">
           <Bs2Circle className="text-black mr-2 w-6 h-6 flex-shrink-0" />
           Choose to replace it, insert a new letter before or after it, or to
           delete it
         </div>
-        <div className="flex justify-center items-center p-4 text-center flex-1 bg-green-300">
+        <div className="flex justify-start items-center p-4 text-center flex-1 bg-green-300 rounded-b">
           <Bs3Circle className="text-black mr-2 w-6 h-6 flex-shrink-0" />
           Choose a letter from the letter bank to use
         </div>

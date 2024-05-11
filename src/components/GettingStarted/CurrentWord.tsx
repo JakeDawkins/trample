@@ -1,9 +1,11 @@
 import clsx from 'clsx';
-import Image from 'next/image';
 import { BsArrowRight } from 'react-icons/bs';
-import CurrentWordImg from './assets/current-word.jpg';
+import LetterButton from '../letterButton';
+import { useState } from 'react';
 
 export default function CurrentWord({ onNext }: { onNext: () => void }) {
+  const [selectedIndex, setSelectedIndex] = useState<number | null>();
+
   return (
     <div className="flex flex-col items-start lg:items-center h-full">
       <h1 className="text-xl font-bold flex-0 self-center">Current word</h1>
@@ -15,13 +17,28 @@ export default function CurrentWord({ onNext }: { onNext: () => void }) {
         You can tap any letter in the current word to perform an action on it
         (we&apos;ll talk about that in a second)
       </p>
-      <Image
-        alt="Current word, 3 letters long, no letters selected"
-        src={CurrentWordImg}
-        width={1080}
-        height={1920}
-        className="mt-4 flex-1 object-contain overflow-hidden rounded-lg"
-      />
+      <div className="flex-1 w-full flex flex-col items-center justify-center -mr-4">
+        <div className={clsx('flex w-full flex-col items-center mt-4 p-4')}>
+          <div className="flex flex-row">
+            <LetterButton
+              letter="C"
+              onClick={() => setSelectedIndex(0)}
+              selected={selectedIndex === 0}
+            />
+            <LetterButton
+              letter="O"
+              onClick={() => setSelectedIndex(1)}
+              selected={selectedIndex === 1}
+            />
+            <LetterButton
+              letter={'G'}
+              onClick={() => setSelectedIndex(2)}
+              selected={selectedIndex === 2}
+            />
+          </div>
+        </div>
+      </div>
+
       <button
         onClick={onNext}
         className={clsx(

@@ -62,7 +62,7 @@ export default function Example({ onNext }: { onNext: () => void }) {
             exampleComplete && 'rainbow-box',
           )}
         >
-          <div className="flex flex-row -mr-8">
+          <div className="flex flex-row">
             <LetterButton
               letter="C"
               onClick={() => selectLetter(0)}
@@ -85,7 +85,7 @@ export default function Example({ onNext }: { onNext: () => void }) {
         </div>
       </div>
 
-      <div className="flex items-center mt-4 ">
+      <div className="flex items-center mt-4">
         {selectedAction !== 'swap' ? (
           <Bs2Circle className="text-black mr-2 w-6 h-6 flex-shrink-0 inline-block" />
         ) : (

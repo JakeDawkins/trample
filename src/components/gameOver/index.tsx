@@ -7,7 +7,7 @@ interface GameOverProps {
   numWords?: number;
   longestWord?: number;
   forfeit?: boolean;
-  possibleWord?: string; 
+  possibleWord?: string;
 }
 
 export default function GameOver(props: GameOverProps) {
@@ -16,19 +16,22 @@ export default function GameOver(props: GameOverProps) {
       <h2 className="text-2xl text-center font-bold">
         {props.forfeit ? 'Game Over' : "You've been trampled"}
       </h2>
-      {props.forfeit ? <>
-        <p className="text-center">You've gave up</p>
-        {props.possibleWord ? <p>You could have played <strong>{props.possibleWord}</strong></p>: null}
-      </>
-       : null}
+      {props.forfeit ? (
+        <>
+          <p className="text-center">You've gave up</p>
+          {props.possibleWord ? (
+            <p>
+              You could have played <strong>{props.possibleWord}</strong>
+            </p>
+          ) : null}
+        </>
+      ) : null}
 
       <div className="flex flex-col border rounded border-black mt-8 overflow-hidden">
         <div className="p-4">
           <p className="text-lg font-bold">Trample #{getDayNumber()}</p>
-          <p className="mt-2">
-            🏆 Score: {props.score}
-          </p>
-          <p className="mt-2">🥇 Longest Word: {props.longestWord}</p>
+          <p className="mt-2">🏆 Score: {props.score}</p>
+          <p className="mt-2">🥇 Number of words: {props.numWords}</p>
 
           {props.bestScore ? (
             <p className="mt-2">🔥 Your Best Score Ever: {props.bestScore}</p>
@@ -42,7 +45,7 @@ export default function GameOver(props: GameOverProps) {
                 window.navigator.share({
                   text: `Trample #${getDayNumber()}\n🏆 Score: ${
                     props.score
-                  }\n🥇 Longest Word: ${props.longestWord}`,
+                  }\n🥇 Number of words: ${props.numWords}`,
                 });
               }}
             >
