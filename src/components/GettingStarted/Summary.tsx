@@ -1,10 +1,9 @@
 import clsx from 'clsx';
-import Image from 'next/image';
 import { Bs1Circle, Bs2Circle, Bs3Circle, BsArrowRight } from 'react-icons/bs';
 
 export default function Summary({ onNext }: { onNext: () => void }) {
   return (
-    <div className="flex flex-col items-start lg:items-center h-full ring ring-red-200">
+    <div className="flex flex-col items-start lg:items-center h-full">
       <h1 className="text-xl font-bold flex-0 self-center">
         A couple last tips
       </h1>
