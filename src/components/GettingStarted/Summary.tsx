@@ -16,6 +16,8 @@ export default function Summary({ onNext }: { onNext: () => void }) {
           Try to use up "bad" or repeated letters in the letter bank as quickly
           as possible
         </li>
+        <li>You can only use a word once</li>
+        <li>There's a new game with a new starting word every day!</li>
       </ul>
       <div className="flex-1 flex flex-col mt-4">
         <div className="flex justify-center items-center p-4 text-center flex-1 bg-blue-300">
