@@ -1,12 +1,13 @@
 import { Dialog } from '@headlessui/react';
 import clsx from 'clsx';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Intro from './Intro';
 import CurrentWord from './CurrentWord';
 import Turns from './Turns';
 import Actions from './Actions';
 import Example from './Example';
 import Summary from './Summary';
+import { BsX } from 'react-icons/bs';
 
 enum Steps {
   INTRO,
@@ -48,6 +49,15 @@ export default function GettingStartedModal({
     }
   }, [step, setStep]);
 
+  const progress = useMemo(() => {
+    if (step === Steps.INTRO) return 0;
+    if (step === Steps.CURRENT_WORD) return 20;
+    if (step === Steps.TURNS) return 40;
+    if (step === Steps.ACTIONS) return 60;
+    if (step === Steps.EXAMPLE) return 80;
+    if (step === Steps.SUMMARY) return 100;
+  }, [step]);
+
   return (
     <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
       {/* The backdrop, rendered as a fixed sibling to the panel container */}
@@ -66,8 +76,17 @@ export default function GettingStartedModal({
               'flex rounded justify-center items-center h-10 w-10 absolute top-2 right-2',
             )}
           >
-            X
+            <BsX className="h-6 w-6 fill-black flex-shrink-0" />
           </button>
+          <div className="h-[4px] absolute top-0 left-0 right-0">
+            <div
+              className="h-[4px] bg-green-600 transition-all"
+              style={{
+                width: `${progress}%`,
+              }}
+            ></div>
+          </div>
+
           {step === Steps.INTRO && <Intro onNext={handleNext} />}
           {step === Steps.CURRENT_WORD && <CurrentWord onNext={handleNext} />}
           {step === Steps.TURNS && <Turns onNext={handleNext} />}
