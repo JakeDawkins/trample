@@ -405,7 +405,7 @@ function Home() {
               >
                 <div
                   className={clsx(
-                    'w-5 h-5 flex items-center justify-center absolute -top-2 -right-2 rounded-full border border-red-600 bg-white',
+                    'w-5 h-5 flex items-center justify-center absolute -top-2 -right-2 rounded-full border  border-red-600 bg-white',
                     deletionsRemaining === 0
                       ? 'bg-red-600 text-white font-bold'
                       : 'bg-white',

@@ -20,7 +20,7 @@ export default function LetterButton({
       className={clsx(
         'relative h-10 w-10 min-w-[40px] mb-4 text-xl text-center border border-r-2 border-b-2 border-black rounded flex justify-center items-center',
         !last && 'mr-4',
-        selected && 'bg-green-600 text-white font-bold border-0',
+        selected && 'bg-green-600 border-green-900 text-white font-bold',
         disabled && 'opacity-50 cursor-not-allowed',
       )}
       onClick={onClick}

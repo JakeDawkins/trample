@@ -34,10 +34,8 @@ export default function ActionButton({ action, active, onClick }: Props) {
   const label = getLabel(action);
   return (
     <button
-      className={`h-10 w-10 min-w-[40px] mr-4 mb-4 rounded flex items-center justify-center ${
-        active
-          ? 'bg-green-600'
-          : 'bg-white border border-r-2 border-b-2 border-black'
+      className={`h-10 w-10 min-w-[40px] mr-4 mb-4 border border-r-2 border-b-2 rounded flex items-center justify-center ${
+        active ? 'bg-green-600 border-green-900' : 'bg-white border-black'
       }`}
       onClick={onClick}
       aria-label={label}
