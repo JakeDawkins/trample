@@ -378,7 +378,7 @@ function Home() {
       <GettingStarted isOpen={showHelpModal} handleClose={dismissHelpModal} />
       <div className="w-full flex flex-col items-center">
         <header className="flex justify-between w-full mt-4 mb-4 sm:px-2 md:px-4">
-          <Popover className="relative">
+          <Popover className="relative flex-1">
             <PopoverButton
               className={clsx(
                 'rounded h-10 w-10 flex items-center justify-center border border-r-2 border-b-2 border-black px-2 hover:bg-gray-100',
@@ -413,7 +413,7 @@ function Home() {
             </PopoverPanel>
           </Popover>
 
-          <h1 className="sm:text-3xl md:text-4xl font-bold">
+          <h1 className={clsx('flex-[2] sm:text-3xl md:text-4xl font-bold')}>
             Trample{' '}
             <span
               className={clsx(
@@ -424,16 +424,19 @@ function Home() {
               <span>#{getDayNumber()}</span>
             </span>
           </h1>
-          <button
-            className={clsx(
-              `rounded flex items-center justify-center border border-r-2 border-b-2 border-black px-2`,
-              score === 0 && 'border-gray-400 text-gray-400 cursor-not-allowed',
-            )}
-            onClick={handleForfeit}
-            disabled={score === 0}
-          >
-            Forfeit
-          </button>
+          <div className="flex-1 flex justify-end">
+            <button
+              className={clsx(
+                `rounded flex items-center justify-center border border-r-2 border-b-2 border-black px-2`,
+                score === 0 &&
+                  'border-gray-400 text-gray-400 cursor-not-allowed',
+              )}
+              onClick={handleForfeit}
+              disabled={score === 0}
+            >
+              Forfeit
+            </button>
+          </div>
         </header>
         <ScoreAndHistory score={score} history={pastWords} />
 
