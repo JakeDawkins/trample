@@ -6,11 +6,15 @@ export function saveGameState({
   score,
   word,
   deletionsRemaining,
+  hardMode,
+  hardModeAttempts,
 }: {
   pastWords: string[];
   score: number;
   word: string;
   deletionsRemaining: number;
+  hardMode: boolean;
+  hardModeAttempts?: number;
 }) {
   const day = getDayNumber();
   localStorage.setItem(
@@ -21,6 +25,8 @@ export function saveGameState({
       score,
       word,
       deletionsRemaining,
+      hardMode,
+      hardModeAttempts,
     }),
   );
 }

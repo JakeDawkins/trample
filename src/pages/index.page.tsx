@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import getFullLetterBank, { pointsForWord } from '../utils/getFullLetterBank';
 import {
-  BsArrowDownUp,
-  BsArrowLeft,
-  BsArrowRight,
+  BsGear,
+  BsList,
+  BsToggleOff,
+  BsToggleOn,
   BsTrash3,
 } from 'react-icons/bs';
 import ScoreAndHistory from '../components/scoreAndHistory';
@@ -16,13 +17,13 @@ import getDayNumber from '../utils/getDayNumber';
 import getTodaysWord from '../utils/getTodaysWord';
 import Head from 'next/head';
 import GettingStarted from '../components/GettingStarted';
-import Button from '../components/button';
 import { useRouter } from 'next/router';
 import * as Sentry from '@sentry/nextjs';
 import mixpanel from 'mixpanel-browser';
 import { loadGameState, saveGameState } from '../utils/localStorage';
 import ActionButton, { Action } from '../components/ActionButton';
 import { HELP_DISMISSED_KEY, STATS_KEY } from '../utils/constants';
+import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
 
 function Home() {
   const router = useRouter();
@@ -77,6 +78,17 @@ function Home() {
     return () => clearInterval(interval);
   }, [currentGameDay]);
 
+  const [hardMode, setHardMode] = useState(false);
+  const toggleHardMode = useCallback(() => {
+    if (pastWords.length > 1) {
+      alert('Hard mode can only be toggled at the start of a new game');
+    } else {
+      setHardModeAttempts(5);
+      setHardMode((prev) => !prev);
+    }
+  }, [pastWords]);
+  const [hardModeAttempts, setHardModeAttempts] = useState(5);
+
   useEffect(() => {
     // make sure the +1/+0 (initial)/-1 dicts are preloaded
     import(`../utils/dicts/${word.length + 1}`);
@@ -84,17 +96,21 @@ function Home() {
     import(`../utils/dicts/${word.length - 1}`);
   }, [word]);
 
+  const [gameStateLoaded, setGameStateLoaded] = useState(false);
+
   // save game state in case of reloads
   useEffect(() => {
-    if (pastWords.length > 1) {
+    if (gameStateLoaded) {
       saveGameState({
         word,
         score,
         pastWords,
         deletionsRemaining,
+        hardMode,
+        hardModeAttempts,
       });
     }
-  }, [word, score, pastWords, deletionsRemaining]);
+  }, [word, score, pastWords, deletionsRemaining, hardMode, hardModeAttempts]);
 
   // load game state if present
   useEffect(() => {
@@ -104,7 +120,10 @@ function Home() {
       setPastWords(savedState.pastWords);
       setScore(savedState.score);
       setDeletionsRemaining(savedState.deletionsRemaining);
+      setHardMode(savedState.hardMode);
+      setHardModeAttempts(savedState.hardModeAttempts);
     }
+    setGameStateLoaded(true);
   }, []);
 
   useEffect(() => {
@@ -250,11 +269,13 @@ function Home() {
         setScore(score + pointsForWord(wordToCheck));
         setPastWords([...pastWords, wordToCheck]);
         setSelectedLetterBankIdx(null);
+        setHardModeAttempts(5);
       };
 
       const handleInvalidWord = () => {
         setErrorMessage(`"${wordToCheck}" is not a word!`);
         setSelectedLetterBankIdx(null);
+        setHardModeAttempts(hardModeAttempts - 1);
         return false;
       };
 
@@ -280,7 +301,7 @@ function Home() {
         return handleInvalidWord();
       }
     },
-    [allFutureLetters, score, selectedLetterBankIdx],
+    [allFutureLetters, score, selectedLetterBankIdx, hardModeAttempts],
   );
 
   const endGameStats = useMemo(() => {
@@ -289,6 +310,13 @@ function Home() {
   }, [gameOver]);
 
   useEffect(() => {
+    // auto end game if hard mode is enabled and no more attempts
+    if (hardMode && hardModeAttempts === 0) {
+      setGameOver(true);
+      endGame({ score, longestWord, pastWords });
+      return;
+    }
+
     // Auto-end game if no more words can be made
     canMakeWord(word, letterBank, deletionsRemaining, pastWords).then(
       ([canMakeWord, possible]) => {
@@ -304,7 +332,16 @@ function Home() {
 
     // already completed one game today
     setGameOver(isGameOver());
-  }, [word, letterBank, isGameOver, pastWords, deletionsRemaining, score]);
+  }, [
+    word,
+    letterBank,
+    isGameOver,
+    pastWords,
+    deletionsRemaining,
+    score,
+    hardMode,
+    hardModeAttempts,
+  ]);
 
   const handleForfeit = useCallback(() => {
     if (score === 0) return;
@@ -318,7 +355,7 @@ function Home() {
     return;
   }
 
-  if ((gameOver && score) || endGameStats?.score) {
+  if (gameOver || endGameStats) {
     return (
       <GameOver
         score={score || endGameStats?.score || 0}
@@ -341,11 +378,50 @@ function Home() {
       <GettingStarted isOpen={showHelpModal} handleClose={dismissHelpModal} />
       <div className="w-full flex flex-col items-center">
         <header className="flex justify-between w-full mt-4 mb-4 sm:px-2 md:px-4">
-          <Button onClick={() => setShowHelpModal(true)}>Help</Button>
+          <Popover className="relative">
+            <PopoverButton
+              className={clsx(
+                'rounded h-10 w-10 flex items-center justify-center border border-r-2 border-b-2 border-black px-2 hover:bg-gray-100',
+              )}
+            >
+              <BsGear className="fill-black h-6 w-6" />
+            </PopoverButton>
+            <PopoverPanel
+              anchor="bottom end"
+              className="mt-4 ml-4 flex flex-col bg-white p-2 border border-r-2 border-black shadow-lg rounded-lg items-start max-w-[250px]"
+            >
+              <button
+                onClick={() => setShowHelpModal(true)}
+                className="w-full pb-2 my-2 border-b border-b-gray-300 text-start font-semibold"
+              >
+                Show getting started guide
+              </button>
+
+              <button className="w-full text-start" onClick={toggleHardMode}>
+                <div className="flex flex-row justify-between">
+                  <p className="font-semibold">Hard mode</p>
+                  {hardMode ? (
+                    <BsToggleOn className="fill-green-600 h-6 w-6" />
+                  ) : (
+                    <BsToggleOff className="fill-gray-600 h-6 w-6" />
+                  )}
+                </div>
+                <p className="text-sm leading-none">
+                  Only 5 incorrect guesses on a turn before game over!
+                </p>
+              </button>
+            </PopoverPanel>
+          </Popover>
+
           <h1 className="sm:text-3xl md:text-4xl font-bold">
             Trample{' '}
-            <span className="text-rainbow text-base align-text-top sm:-ml-[6px] md:-ml-2">
-              #{getDayNumber()}
+            <span
+              className={clsx(
+                'text-rainbow text-base align-text-top sm:-ml-[6px] md:-ml-2',
+                hardMode ? 'text-red-rainbow' : 'text-rainbow',
+              )}
+            >
+              <span>#{getDayNumber()}</span>
             </span>
           </h1>
           <button
