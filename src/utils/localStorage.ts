@@ -1,19 +1,26 @@
-import { GAME_STATE_KEY } from './constants';
+import { GAME_STATE_KEY, HARD_MODE_ENABLED_KEY } from './constants';
 import getDayNumber from './getDayNumber';
+
+export function saveHardModeEnabled(enabled: boolean) {
+  localStorage.setItem(HARD_MODE_ENABLED_KEY, JSON.stringify(enabled));
+}
+
+export function loadHardModeEnabled() {
+  const savedState = localStorage.getItem(HARD_MODE_ENABLED_KEY);
+  return savedState ? JSON.parse(savedState) : false;
+}
 
 export function saveGameState({
   pastWords,
   score,
   word,
   deletionsRemaining,
-  hardMode,
   hardModeAttempts,
 }: {
   pastWords: string[];
   score: number;
   word: string;
   deletionsRemaining: number;
-  hardMode: boolean;
   hardModeAttempts?: number;
 }) {
   const day = getDayNumber();
@@ -25,7 +32,6 @@ export function saveGameState({
       score,
       word,
       deletionsRemaining,
-      hardMode,
       hardModeAttempts,
     }),
   );

@@ -20,7 +20,12 @@ import GettingStarted from '../components/GettingStarted';
 import { useRouter } from 'next/router';
 import * as Sentry from '@sentry/nextjs';
 import mixpanel from 'mixpanel-browser';
-import { loadGameState, saveGameState } from '../utils/localStorage';
+import {
+  loadGameState,
+  loadHardModeEnabled,
+  saveGameState,
+  saveHardModeEnabled,
+} from '../utils/localStorage';
 import ActionButton, { Action } from '../components/ActionButton';
 import { HELP_DISMISSED_KEY, STATS_KEY } from '../utils/constants';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
@@ -106,21 +111,22 @@ function Home() {
         score,
         pastWords,
         deletionsRemaining,
-        hardMode,
         hardModeAttempts,
       });
+      saveHardModeEnabled(hardMode);
     }
   }, [word, score, pastWords, deletionsRemaining, hardMode, hardModeAttempts]);
 
   // load game state if present
   useEffect(() => {
     const savedState = loadGameState();
+    const hardModeEnabled = loadHardModeEnabled();
+    setHardMode(hardModeEnabled);
     if (savedState) {
       setWord(savedState.word);
       setPastWords(savedState.pastWords);
       setScore(savedState.score);
       setDeletionsRemaining(savedState.deletionsRemaining);
-      setHardMode(savedState.hardMode);
       setHardModeAttempts(savedState.hardModeAttempts);
     }
     setGameStateLoaded(true);
