@@ -164,7 +164,10 @@ export default function Example({ onNext }: { onNext: () => void }) {
         onClick={onNext}
         className={clsx(
           'flex-0 flex items-center justify-center',
-          'mt-4 px-2 py-1 border border-black hover:bg-black hover:text-white border-b-2 border-r-2 rounded-lg  w-full max-w-[480px]',
+          'mt-4 px-2 py-1 border border-black  border-b-2 border-r-2 rounded-lg  w-full max-w-[480px]',
+          !exampleComplete
+            ? 'cursor-not-allowed'
+            : 'hover:bg-black hover:text-white',
           'disabled:opacity-60',
         )}
         disabled={!exampleComplete}
@@ -172,6 +175,11 @@ export default function Example({ onNext }: { onNext: () => void }) {
         Next
         <BsArrowRight className="ml-2 inline-block" />
       </button>
+      {!exampleComplete && (
+        <p className="text-sm text-gray-800">
+          Complete the steps above to continue
+        </p>
+      )}
     </div>
   );
 }

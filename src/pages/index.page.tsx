@@ -1,12 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import getFullLetterBank, { pointsForWord } from '../utils/getFullLetterBank';
-import {
-  BsGear,
-  BsList,
-  BsToggleOff,
-  BsToggleOn,
-  BsTrash3,
-} from 'react-icons/bs';
+import { BsGear, BsToggleOff, BsToggleOn, BsTrash3 } from 'react-icons/bs';
 import ScoreAndHistory from '../components/scoreAndHistory';
 import LetterButton from '../components/letterButton';
 import clsx from 'clsx';
@@ -419,7 +413,11 @@ function Home() {
             </PopoverPanel>
           </Popover>
 
-          <h1 className={clsx('flex-[2] sm:text-3xl md:text-4xl font-bold')}>
+          <h1
+            className={clsx(
+              'flex-[2] sm:text-3xl md:text-4xl font-bold text-center',
+            )}
+          >
             Trample{' '}
             <span
               className={clsx(
