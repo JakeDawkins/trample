@@ -7,3 +7,5 @@ cypress/screenshots
 .sentryclirc
 .DS_Store
 .vscode/settings.json
+.dev.vars
+*.sqlite*
