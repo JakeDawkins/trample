@@ -25,8 +25,8 @@ function Layout({ children }: LayoutProps) {
         <ErrorBoundary>
           <main className="flex w-full h-full">{children}</main>
         </ErrorBoundary>
-        <footer className="text-xs text-center">
-          &copy;{new Date().getFullYear()} Sky Rat Digital
+        {/* <footer className="text-xs text-center">
+          &copy;{new Date().getFullYear()} Jake Dawkins
           <Link
             className="underline text-green-600 hover:text-green-800 inline ml-2"
             href="https://forms.gle/PRm4g235UKTbevn39"
@@ -34,7 +34,7 @@ function Layout({ children }: LayoutProps) {
           >
             Report an issue
           </Link>
-        </footer>
+        </footer> */}
       </div>
       <Analytics />
     </>
