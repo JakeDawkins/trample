@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { MockedProvider } from '@apollo/client/testing';
 import HomePage from './index.page';
 
 // if we needed to mock any useRouter usage
@@ -12,7 +11,5 @@ describe.skip('HomePage', () => {
   //   mockRouter.setCurrentUrl('/');
   // });
 
-  it('renders with loading indicator', () => {
-    return null;
-  });
+  it('renders with loading indicator', () => {});
 });

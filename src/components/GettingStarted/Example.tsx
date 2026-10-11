@@ -48,9 +48,9 @@ export default function Example({ onNext }: { onNext: () => void }) {
       <div className="relative">
         <div className="mt-4 flex-0 flex flex-row items-center">
           {selectedIndex === 2 ? (
-            <BsCheckCircle className="text-green-600 mr-2 w-6 h-6 flex-shrink-0" />
+            <BsCheckCircle className="text-green-600 mr-2 w-6 h-6 shrink-0" />
           ) : (
-            <Bs1Circle className="text-black mr-2 w-6 h-6 flex-shrink-0" />
+            <Bs1Circle className="text-black mr-2 w-6 h-6 shrink-0" />
           )}
           <p className="">
             The starting word here is "COG". Try selecting the{' '}
@@ -88,9 +88,9 @@ export default function Example({ onNext }: { onNext: () => void }) {
 
       <div className="flex items-center mt-4">
         {selectedAction !== 'swap' ? (
-          <Bs2Circle className="text-black mr-2 w-6 h-6 flex-shrink-0 inline-block" />
+          <Bs2Circle className="text-black mr-2 w-6 h-6 shrink-0 inline-block" />
         ) : (
-          <BsCheckCircle className="text-green-600 mr-2 w-6 h-6 flex-shrink-0 inline-block" />
+          <BsCheckCircle className="text-green-600 mr-2 w-6 h-6 shrink-0 inline-block" />
         )}
         <p className="flex-0 ">
           Then, select the <strong>replace</strong> action
@@ -131,9 +131,9 @@ export default function Example({ onNext }: { onNext: () => void }) {
 
       <div className="flex items-center mt-4 ">
         {selectedLetterBankIndex !== 4 ? (
-          <Bs3Circle className="text-black mr-2 w-6 h-6 flex-shrink-0 inline-block" />
+          <Bs3Circle className="text-black mr-2 w-6 h-6 shrink-0 inline-block" />
         ) : (
-          <BsCheckCircle className="text-green-600 mr-2 w-6 h-6 flex-shrink-0 inline-block" />
+          <BsCheckCircle className="text-green-600 mr-2 w-6 h-6 shrink-0 inline-block" />
         )}
         <p className="flex-0 ">
           Finally, select the <strong>N</strong> to replace the G.

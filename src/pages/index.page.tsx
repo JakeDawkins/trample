@@ -415,7 +415,7 @@ function Home() {
 
           <h1
             className={clsx(
-              'flex-[2] sm:text-3xl md:text-4xl font-bold text-center',
+              'flex-2 sm:text-3xl md:text-4xl font-bold text-center',
             )}
           >
             Trample{' '}

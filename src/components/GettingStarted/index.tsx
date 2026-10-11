@@ -1,4 +1,4 @@
-import { Dialog } from '@headlessui/react';
+import { Dialog, DialogPanel } from '@headlessui/react';
 import clsx from 'clsx';
 import { useCallback, useMemo, useState } from 'react';
 import Intro from './Intro';
@@ -64,7 +64,7 @@ export default function GettingStartedModal({
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       {/* Full-screen container to center the panel */}
       <div className="fixed inset-0 flex w-screen items-center justify-center lg:p-4">
-        <Dialog.Panel
+        <DialogPanel
           className={
             'relative bg-white rounded w-full h-full lg:max-w-[90%] lg:max-h-[90%] overflow-y-scroll p-4'
           }
@@ -76,7 +76,7 @@ export default function GettingStartedModal({
               'flex rounded justify-center items-center h-10 w-10 absolute top-2 right-2',
             )}
           >
-            <BsX className="h-6 w-6 fill-black flex-shrink-0" />
+            <BsX className="h-6 w-6 fill-black shrink-0" />
           </button>
           <div className="h-[4px] absolute top-0 left-0 right-0">
             <div
@@ -93,7 +93,7 @@ export default function GettingStartedModal({
           {step === Steps.ACTIONS && <Actions onNext={handleNext} />}
           {step === Steps.EXAMPLE && <Example onNext={handleNext} />}
           {step === Steps.SUMMARY && <Summary onNext={handleNext} />}
-        </Dialog.Panel>
+        </DialogPanel>
       </div>
     </Dialog>
   );

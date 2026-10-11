@@ -7,7 +7,6 @@
 - [Running Tests](#running-tests)
   - [Running Unit/Integration tests](#running-unitintegration-tests)
   - [Running End-to-End tests](#running-end-to-end-tests)
-- [Starting React Storybook](#starting-react-storybook)
 - [Scripts Reference](#scripts-reference)
 
 ## Overview
@@ -17,15 +16,10 @@ This app is a template setup to quickly stand up a new app with the following to
 - [Next.js](https://nextjs.org)
 - [TypeScript](https://www.typescriptlang.org)
 - [Tailwind CSS](https://tailwindcss.com)
-- [React Storybook](https://storybook.js.org)
 - [Jest](https://jestjs.io)
 - [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
-- [Apollo Client](https://www.apollographql.com/apollo-client)
 - [Cypress](https://www.cypress.io)
-- [Chromatic](https://www.chromatic.com)
 - [Codespaces](https://github.com/features/codespaces)
-
-This template uses Apollo & GraphQL for the data-layer. The template by default generates types based off the [Countries API](https://github.com/trevorblades/countries) by [@trevorblades](https://github.com/trevorblades).
 
 ## Directory Structure
 
@@ -34,8 +28,6 @@ This template uses Apollo & GraphQL for the data-layer. The template by default 
   - myComponent/
     - index.tsx # the component itself
     - index.spec.tsx # the unit test suite
-    - index.stories.tsx # storybook stories
-    - docs.mdx # component documentation used by storybook
 - pages/
   - pagename.tsx # uses components/ files
   - pagename.spec.tsx # integration test suite for pages
@@ -43,8 +35,7 @@ This template uses Apollo & GraphQL for the data-layer. The template by default 
 
 - I chose to use flat directories in this project, since there would be
   many files associated with a single "component".
-  - There are test files (`.spec.tsx`), documentation (`.mdx`), storybook files
-    (`.stories.tsx`), and the component itself (`.tsx`).
+  - There are test files (`.spec.tsx`) and the component itself (`.tsx`).
   - If these were all placed in separate peer directories to the components
     themselves, navigating the project would be more challenging. Colocating
     components and associated files allows for quick navigation and easy copying
@@ -121,33 +112,6 @@ yarn test:e2e:dev
 You may need to stop any running instance of `yarn dev` that currently is running
 on your machine.
 
-## Starting React Storybook
-
-In most `src/components` directory, there are `index.stories.tsx` and `docs.mdx` files.
-These files can include programmatic sandboxes and written documentation on the usage,
-accessibility concerns, and props for each of the built components.
-
-> Note: There is a `docs` and a `canvas` tab at the top of each page. The `docs`
-> tab is there to display the `docs.mdx` files, and the `canvas` tab is the rendering
-> of the examples defined in the `index.stories.mdx` file. You can use the left
-> sidebar to navigate between components.
-
-You can also run storybook locally if you'd like. To run storybook, clone this
-repo and then run the following (requires [yarn](https://yarnpkg.com/getting-started/install)
-to be installed previously):
-
-```
-cd countries
-
-# install dependencies
-yarn
-
-npm run storybook
-```
-
-Once up and running, go to [localhost:6006](http://localhost:6006) to see the
-app running.
-
 ## Scripts Reference
 
 Using `yarn <command-name>`:
@@ -155,9 +119,6 @@ Using `yarn <command-name>`:
 **Development workflow**:
 
 - `dev`: Run app in development mode
-- `storybook`: Build and run React Storybook on port 6006
-- `generate:types`: Generate GraphQL types
-- `generate:types:watch`: Generate GraphQL types and rebuild on change
 - `lint`: Check project with ESLint
 
 **Testing**:
@@ -173,6 +134,3 @@ Using `yarn <command-name>`:
 
 - `build`: Build app for production
 - `start`: Serve built production app
-- `build:storybook`: Build storybook for deploy
-- `chromatic`: Deploys storybook instance to Chromatic
-  - Expects project token set in this script in `package.json`

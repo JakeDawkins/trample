@@ -21,16 +21,16 @@ export default function Summary({ onNext }: { onNext: () => void }) {
       </ul>
       <div className="flex-1 flex flex-col mt-4">
         <div className="flex justify-start items-center p-4 text-center flex-1 bg-blue-200 border-4 border-blue-700 rounded-lg">
-          <Bs1Circle className="text-black mr-2 w-6 h-6 flex-shrink-0" />
+          <Bs1Circle className="text-black mr-2 w-6 h-6 shrink-0" />
           Choose a letter from the current word
         </div>
         <div className="flex justify-start items-center p-4 text-center flex-1 bg-purple-200 border-4 border-purple-700 mt-2 rounded-lg ">
-          <Bs2Circle className="text-black mr-2 w-6 h-6 flex-shrink-0" />
+          <Bs2Circle className="text-black mr-2 w-6 h-6 shrink-0" />
           Choose to replace it, insert a new letter before or after it, or to
           delete it
         </div>
         <div className="flex justify-start items-center p-4 text-center flex-1 bg-green-200 border-4 border-green-700 mt-2 rounded-lg ">
-          <Bs3Circle className="text-black mr-2 w-6 h-6 flex-shrink-0" />
+          <Bs3Circle className="text-black mr-2 w-6 h-6 shrink-0" />
           Choose a letter from the letter bank to use
         </div>
       </div>
