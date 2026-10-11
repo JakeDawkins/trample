@@ -21,5 +21,44 @@ This is an example project made to be used as a quick start into building OpenAP
 ## Development
 
 1. Run `wrangler dev` to start a local instance of the API.
-2. Open `http://localhost:8787/` in your browser to see the Swagger interface where you can try the endpoints.
+2. Open `http://localhost:8788/` in your browser to see the Swagger interface where you can try the endpoints.
 3. Changes made in the `src/` folder will automatically trigger the server to reload, you only need to refresh the Swagger interface.
+
+## Database
+
+The API uses a Cloudflare D1 database bound as `prod_trample` in `wrangler.jsonc`. The schema lives in `migrations/`, which is the source of truth. Don't edit the database directly.
+
+Local data for `wrangler dev` is stored under `.wrangler/state/`.
+
+### First-time setup
+
+Apply all migrations to your local database:
+
+```sh
+npx wrangler d1 migrations apply prod_trample --local
+```
+
+### Changing the schema
+
+1. Create a new migration file:
+
+   ```sh
+   npx wrangler d1 migrations create prod_trample <short_description>
+   ```
+
+2. Write the SQL in the generated `migrations/NNNN_<short_description>.sql`. Never edit a migration that has already been applied. Add a new one instead.
+3. Apply it locally and test with `wrangler dev`:
+
+   ```sh
+   npx wrangler d1 migrations apply prod_trample --local
+   ```
+
+4. Apply it to production:
+
+   ```sh
+   npx wrangler d1 migrations apply prod_trample --remote
+   ```
+
+To see which migrations are pending, run `npx wrangler d1 migrations list prod_trample --local` (or `--remote`).
+
+SQLite can't change a column's type or constraints with `ALTER TABLE`. To do that, create a new table, copy the rows over, drop the old table, and rename the new one.
