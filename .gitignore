@@ -6,3 +6,4 @@ cypress/screenshots
 # Sentry Config File
 .sentryclirc
 .DS_Store
+.vscode/settings.json
