@@ -53,13 +53,22 @@ export class AuthCodeSend extends OpenAPIRoute {
     // Create code
     // TODO -- index on createdad and email
 
+    // how many for the email in the last hour
+    const { results: countForEmailResults } = await c.env.prod_trample
+      .prepare('SELECT * FROM auth_codes WHERE email = ?')
+      .bind(email)
+      .run();
+    console.log('RES', countForEmailResults);
+    const isOverEmailLimitPerHour =
+      countForEmailResults.length >= CODES_PER_EMAIL_PER_HOUR_LIMIT;
+
     // TODO -- real values here
     const recentCodesForEmail = 2,
       recentCodesForDevice = 2,
       timeSinceLastAttempt = 200 * 1000;
     if (
       recentCodesForDevice >= CODES_PER_DEVICE_PER_HOUR_LIMIT ||
-      recentCodesForEmail >= CODES_PER_EMAIL_PER_HOUR_LIMIT ||
+      isOverEmailLimitPerHour ||
       timeSinceLastAttempt < RETRY_LIMIT_MS
     ) {
       return c.json(
@@ -69,15 +78,14 @@ export class AuthCodeSend extends OpenAPIRoute {
         401,
       );
     } else {
-      code = (crypto.getRandomValues(new Uint32Array(1))[0] % 10000)
+      code = (crypto.getRandomValues(new Uint32Array(1))[0]! % 10000)
         .toString()
         .padStart(4, '0');
       // create code
     }
 
     // Send email
-    const resend = new Resend(c.env.RESEND_API_KEY);
-    const { data: resendData, error: resendError } = await resend.emails.send({
+    const emailPayload = {
       from: 'hello@playtrample.com',
       to: email,
       subject: 'Your Trample code is ' + code,
@@ -88,10 +96,19 @@ export class AuthCodeSend extends OpenAPIRoute {
         <p style="margin: 0 0 24px; font-size: 32px; font-weight: bold; letter-spacing: 6px;">${code}</p>
         <p style="margin: 0; color: #666; font-size: 14px;">If you did not request this code, you can ignore this email.</p>
       </div>`,
-    });
+    };
 
-    if (resendError || !resendData) {
-      return c.json({ errorMessage: 'Provider error' }, 500);
+    // ENVIRONMENT is only set in .dev.vars, so this never runs when deployed
+    if (c.env.ENVIRONMENT === 'development') {
+      console.log('[dev] email not sent', emailPayload);
+    } else {
+      const resend = new Resend(c.env.RESEND_API_KEY);
+      const { data: resendData, error: resendError } =
+        await resend.emails.send(emailPayload);
+
+      if (resendError || !resendData) {
+        return c.json({ errorMessage: 'Provider error' }, 500);
+      }
     }
 
     return c.json({}, 201);
