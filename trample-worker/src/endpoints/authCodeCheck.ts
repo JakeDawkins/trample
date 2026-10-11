@@ -17,7 +17,7 @@ export class AuthCodeCheck extends OpenAPIRoute {
           'application/json': {
             schema: z.object({
               email: z.email(),
-              code: z.string().length(4),
+              code: z.string().regex(/^[0-9]{4}$/),
             }),
           },
         },

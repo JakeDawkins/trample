@@ -29188,7 +29188,7 @@ var AuthCodeCheck = class extends OpenAPIRoute {
           "application/json": {
             schema: external_exports.object({
               email: external_exports.email(),
-              code: external_exports.string().length(4)
+              code: external_exports.string().regex(/^[0-9]{4}$/)
             })
           }
         }
@@ -34705,19 +34705,18 @@ var AuthCodeSend = class extends OpenAPIRoute {
         401
       );
     } else {
-      code = "000000";
+      code = (crypto.getRandomValues(new Uint32Array(1))[0] % 1e4).toString().padStart(4, "0");
     }
     const resend = new Resend(c.env.RESEND_API_KEY);
-    const codePretty = `${code.slice(0, 3)}-${code.slice(3, 6)}`;
     const { data: resendData, error: resendError } = await resend.emails.send({
       from: "hello@playtrample.com",
       to: email3,
-      subject: "Your Trample code is " + codePretty,
+      subject: "Your Trample code is " + code,
       // TODO -- move all copy out to a copy file
       html: `<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #222; font-size: 16px; line-height: 1.5; max-width: 480px; margin: 0 auto; padding: 24px;">
         <p style="margin: 0 0 16px;">Hello from Trample</p>
         <p style="margin: 0 0 16px;">Your sign-in code is below:</p>
-        <p style="margin: 0 0 24px; font-size: 32px; font-weight: bold; letter-spacing: 6px;">${codePretty}</p>
+        <p style="margin: 0 0 24px; font-size: 32px; font-weight: bold; letter-spacing: 6px;">${code}</p>
         <p style="margin: 0; color: #666; font-size: 14px;">If you did not request this code, you can ignore this email.</p>
       </div>`
     });
